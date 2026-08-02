@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useLang } from "./lang.jsx";
 import { Reveal } from "./chrome.jsx";
@@ -450,11 +451,65 @@ export function GalleryPage() {
   );
 }
 
+/* ═══════════ BOOKING CONFIRMATION MODAL ═══════════ */
+function BookingConfirm({ url, onClose }) {
+  const { L } = useLang();
+  const cardRef = useRef(null);
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";   // don't let the page scroll behind the scrim
+    cardRef.current?.focus();
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  // Portalled to <body>: the animated .page-fade wrapper in App.jsx establishes
+  // a containing block, which would otherwise size this fixed scrim to the page
+  // instead of the viewport and let the nav paint over it.
+  return createPortal(
+    <div className="modal-scrim" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="bkTitle" tabIndex={-1} ref={cardRef}>
+        <button className="modal-close" type="button" onClick={onClose} aria-label={L({ en: "Close", ar: "إغلاق" })}>×</button>
+        <span className="modal-check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m5 12.5 4.5 4.5L19 7.5" />
+          </svg>
+        </span>
+        <p className="modal-eyebrow">{L({ en: "ALMOST THERE", ar: "بقيت خطوة واحدة" })}</p>
+        <h3 id="bkTitle" className="modal-title">{L({ en: "Your request is written", ar: "طلبك جاهز" })}</h3>
+        <p className="modal-copy">
+          {L({
+            en: "It's waiting in WhatsApp with your name, date, and time already filled in. Press send there and our team replies within the hour.",
+            ar: "طلبك بانتظارك في واتساب، وفيه اسمك وتاريخ وموعد المعاينة. اضغط إرسال هناك، وسيرد فريقنا خلال ساعة.",
+          })}
+        </p>
+        <div className="modal-actions">
+          <a className="btn-gold" href={url} target="_blank" rel="noopener noreferrer">
+            {L({ en: "OPEN WHATSAPP", ar: "افتح واتساب" })}
+          </a>
+          <button className="btn-outline-navy" type="button" onClick={onClose}>
+            {L({ en: "DONE", ar: "تم" })}
+          </button>
+        </div>
+        <p className="modal-note">
+          {L({ en: "Didn't open? Your browser may have blocked the pop-up — use the button above.", ar: "لم يُفتح؟ قد يكون متصفحك حجب النافذة — استخدم الزر بالأعلى." })}
+        </p>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 /* ═══════════ BOOKING ═══════════ */
 export function Booking() {
   const { L } = useLang();
   const [params] = useSearchParams();
-  const [confirmed, setConfirmed] = useState(false);
+  const [sent, setSent] = useState(null);   // holds the WhatsApp URL once submitted
   const unit = params.get("unit");
   const unitOptions = [
     { v: "Residence 1719", t: { en: "Residence 1719 — General", ar: "مشروع ١٧١٩ — عام" } },
@@ -467,8 +522,9 @@ export function Booking() {
     e.preventDefault();
     const f = e.target;
     const msg = `مرحباً شركة الشاذروان للإسكان 🏠\nأرغب بحجز موعد لمعاينة منزل.\n\nViewing request:\n• Name: ${f.name.value}\n• Phone: ${f.phone.value}\n• Project: ${f.project.value}\n• Date: ${f.date.value}\n• Time: ${f.time.value}`;
-    window.open(wa(msg), "_blank");
-    setConfirmed(true);
+    const url = wa(msg);
+    window.open(url, "_blank");
+    setSent(url);
   };
 
   return (
@@ -508,7 +564,6 @@ export function Booking() {
             </div>
             <button type="submit" className="btn-book">{L({ en: "RESERVE MY VIEWING", ar: "احجز موعدي" })}</button>
             <p className="booking-note">{L({ en: "Your request opens in WhatsApp — confirm and send, and our team replies within the hour.", ar: "سيُفتح طلبك في واتساب — أكّد وأرسل، وسيرد فريقنا خلال ساعة." })}</p>
-            {confirmed && <p className="booking-confirm">{L({ en: "✓ Your viewing request is ready in WhatsApp — just press send.", ar: "✓ طلب المعاينة جاهز في واتساب — فقط اضغط إرسال." })}</p>}
           </Reveal>
           <Reveal className="binfo-row">
             {[
@@ -525,6 +580,7 @@ export function Booking() {
           </Reveal>
         </div>
       </section>
+      {sent && <BookingConfirm url={sent} onClose={() => setSent(null)} />}
     </>
   );
 }
