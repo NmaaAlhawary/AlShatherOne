@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useLang } from "./lang.jsx";
 import { Reveal } from "./chrome.jsx";
-import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, SOCIAL, wa } from "./data.js";
+import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, SERVICES, SOCIAL, wa } from "./data.js";
 import { GalleryRing, ScrollHero } from "./three3d.jsx";
 
 const PageHero = ({ eyebrow, title }) => {
@@ -18,6 +18,41 @@ const PageHero = ({ eyebrow, title }) => {
     </header>
   );
 };
+
+/* ═══════════ SERVICE ICONS — thin gold line-work ═══════════ */
+const ICONS = {
+  building: <><path d="M4 21V6.5L12 3l8 3.5V21" /><path d="M9 21v-5h6v5" /><path d="M8 9.5h2M14 9.5h2M8 13h2M14 13h2" /></>,
+  key: <><circle cx="8" cy="12" r="4" /><path d="M12 12h9M17.5 12v3.2M20.2 12v2.4" /></>,
+  trowel: <><path d="M14.5 3.5 20.5 9.5" /><path d="M17.5 6.5 12 12" /><path d="M12 12 4 15.5 7.5 20 12 12Z" /></>,
+  calendar: <><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" /><path d="M16 3v4M8 3v4M3.5 10.5h17" /><path d="M9 14.5h2M9 17.5h6M13 14.5h2" /></>,
+  shield: <><path d="M12 3.2 20 6v6c0 4.6-3.3 7.6-8 8.9-4.7-1.3-8-4.3-8-8.9V6l8-2.8Z" /><path d="m9 12 2.2 2.2L15.4 10" /></>,
+  compass: <><circle cx="12" cy="12" r="8.8" /><path d="m15.4 8.6-2 5.4-5.4 2 2-5.4 5.4-2Z" /></>,
+};
+const ServiceIcon = ({ name }) => (
+  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor"
+    strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {ICONS[name] ?? ICONS.building}
+  </svg>
+);
+
+/* ═══════════ SERVICES — compact boxes inside "Begin Your Story" ═══════════ */
+function ServicesBoxes() {
+  const { L } = useLang();
+  return (
+    <div className="svc-block" id="services">
+      <Reveal as="p" className="svc-eyebrow">{L({ en: "WHAT WE DO", ar: "ماذا نقدّم" })}</Reveal>
+      <div className="svc-grid">
+        {SERVICES.map((s, i) => (
+          <Reveal as="article" className="svc-box" key={s.n} delay={i * 70}>
+            <span className="svc-icon"><ServiceIcon name={s.icon} /></span>
+            <h3 className="svc-title">{L(s.t)}</h3>
+            <p className="svc-text">{L(s.p)}</p>
+          </Reveal>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /* ═══════════ HOME ═══════════ */
 export function Home() {
@@ -122,6 +157,7 @@ export function Home() {
           <Reveal as="h2" className="chapter-title on-blue">{L({ en: "Begin Your Story", ar: "ابدأ قصتك" })}</Reveal>
           <Reveal className="chapter-rule gold"></Reveal>
           <Reveal as="p" className="contact-lead">{L({ en: "Your ideal home in Amman is waiting. Reach out and let us walk you through it.", ar: "منزلك المثالي في عمّان بانتظارك. تواصل معنا ودعنا نرافقك في الجولة." })}</Reveal>
+          <ServicesBoxes />
           <Reveal className="contact-actions">
             <a className="btn-solid" href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer">{L({ en: "FOLLOW ON INSTAGRAM", ar: "تابعنا على إنستغرام" })}</a>
             <a className="btn-ghost" href={SOCIAL.whatsapp} target="_blank" rel="noopener noreferrer">{L({ en: "WHATSAPP US", ar: "راسلنا على واتساب" })}</a>
@@ -135,49 +171,119 @@ export function Home() {
 }
 
 /* ═══════════ ABOUT ═══════════ */
+const ABOUT_FACTS = [
+  { v: "2010", l: { en: "Established", ar: "سنة التأسيس" } },
+  { v: "1719", l: { en: "The Current Residence", ar: "المشروع الحالي" } },
+  { v: { en: "Amman", ar: "عمّان" }, l: { en: "Where We Build", ar: "حيث نبني" } },
+  { v: { en: "Direct", ar: "مباشرة" }, l: { en: "From the Developer", ar: "من المطوّر" } },
+];
+
+const ABOUT_VALUES = [
+  { k: "I", t: { en: "Honesty", ar: "الصدق" }, p: { en: "A straight answer on every question — the layout, the floor, the finish, the price.", ar: "إجابة صريحة على كل سؤال — التوزيع، الطابق، التشطيب، والسعر." } },
+  { k: "II", t: { en: "Trust", ar: "الثقة" }, p: { en: "What we promise at the drawing is what we hand over at the door.", ar: "ما نعد به على المخطط هو ما نسلّمه عند الباب." } },
+  { k: "III", t: { en: "Integrity", ar: "النزاهة" }, p: { en: "No shortcuts inside the walls — the parts you never see are built like the parts you do.", ar: "لا اختصارات داخل الجدران — ما لا تراه يُبنى كما يُبنى ما تراه." } },
+];
+
 export function About() {
   const { L } = useLang();
   return (
     <>
       <PageHero eyebrow={{ en: "OUR COMPANY", ar: "من نحن" }} title={{ en: "About Al Shatherwan", ar: "عن الشاذروان" }} />
+
+      {/* ── editorial opening: portrait of the company ── */}
+      <section className="chapter chapter-house" id="house">
+        <div className="pattern-bg light"></div>
+        <div className="chapter-inner wide">
+          <div className="house-split">
+            <Reveal className="house-media">
+              <div className="house-frame"><img src="/assets/building-1719.jpg" alt="Al Shatherwan residence" /></div>
+            </Reveal>
+            <div className="house-copy">
+              <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</Reveal>
+              <Reveal as="h2" className="chapter-title left" delay={70}>{L({ en: "A house that builds houses", ar: "بيتٌ يبني البيوت" })}</Reveal>
+              <Reveal className="chapter-rule left" delay={130}></Reveal>
+              <Reveal as="p" className="house-lead" delay={180}>
+                {L({
+                  en: "Since 2010, Al Shatherwan for Housing has been building high-quality homes in prime locations across Amman — where comfort meets value.",
+                  ar: "منذ عام ٢٠١٠، وشركة الشاذروان للإسكان تبني منازل عالية الجودة في أرقى مواقع عمّان — حيث تلتقي الراحة بالقيمة.",
+                })}
+              </Reveal>
+              <Reveal as="p" className="house-body" delay={240}>
+                {L({
+                  en: "We are not brokers. We choose the land, design the building, raise it, finish it, and hand you the key ourselves — which is why every answer you get about a Shatherwan home comes from the people who built it.",
+                  ar: "نحن لسنا وسطاء. نختار الأرض، ونصمم المبنى، ونبنيه، ونشطّبه، ونسلّمك المفتاح بأنفسنا — لذلك تأتيك كل إجابة عن منزل الشاذروان ممن بنوه.",
+                })}
+              </Reveal>
+              <Reveal className="house-facts" delay={300}>
+                {ABOUT_FACTS.map((f) => (
+                  <div className="fact" key={f.l.en}>
+                    <span className="fact-v">{typeof f.v === "string" ? f.v : L(f.v)}</span>
+                    <span className="fact-l">{L(f.l)}</span>
+                  </div>
+                ))}
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="chapter chapter-vision" id="vision">
         <div className="pattern-bg light"></div>
         <div className="chapter-inner">
-          <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</Reveal>
-          <Reveal as="h2" className="chapter-title">{L({ en: "The Vision", ar: "رؤيتنا" })}</Reveal>
-          <Reveal className="chapter-rule"></Reveal>
+          <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER II", ar: "الفصل الثاني" })}</Reveal>
+          <Reveal as="h2" className="chapter-title" delay={70}>{L({ en: "The Vision", ar: "رؤيتنا" })}</Reveal>
+          <Reveal className="chapter-rule" delay={130}></Reveal>
           <div className="vm-grid">
-            <Reveal className="vm-card">
+            <Reveal className="vm-card" delay={60}>
               <p className="vm-label">{L({ en: "OUR VISION", ar: "رؤيتنا" })}</p>
               <p className="vm-text">{L({ en: "To be one of Jordan's leading real estate developers, trusted for quality, innovation, and long-term value.", ar: "أن نكون من أبرز شركات التطوير العقاري في الأردن، موثوقين بالجودة والابتكار والقيمة طويلة الأمد." })}</p>
             </Reveal>
-            <Reveal className="vm-card">
+            <Reveal className="vm-card" delay={180}>
               <p className="vm-label">{L({ en: "OUR MISSION", ar: "رسالتنا" })}</p>
               <p className="vm-text">{L({ en: "To develop modern, reliable, and comfortable homes that meet the needs of every family.", ar: "تطوير منازل عصرية موثوقة ومريحة تلبي احتياجات كل عائلة." })}</p>
             </Reveal>
           </div>
-          <Reveal as="p" className="values-line">{L({ en: "We leave our mark on real estate development — and we believe in honesty, trust, and integrity.", ar: "نضع بصمتنا في عالم التطوير العقاري — ونؤمن بالصدق والثقة والنزاهة." })}</Reveal>
+          <Reveal as="p" className="values-line" delay={120}>{L({ en: "We leave our mark on real estate development — and we believe in honesty, trust, and integrity.", ar: "نضع بصمتنا في عالم التطوير العقاري — ونؤمن بالصدق والثقة والنزاهة." })}</Reveal>
+        </div>
+      </section>
+
+      {/* ── the three values, given room ── */}
+      <section className="chapter chapter-values" id="values">
+        <div className="pattern-bg"></div>
+        <div className="chapter-inner wide">
+          <Reveal as="p" className="chapter-num on-blue">{L({ en: "CHAPTER III", ar: "الفصل الثالث" })}</Reveal>
+          <Reveal as="h2" className="chapter-title on-blue" delay={70}>{L({ en: "What We Stand On", ar: "ما نقوم عليه" })}</Reveal>
+          <Reveal className="chapter-rule gold" delay={130}></Reveal>
+          <div className="values-grid">
+            {ABOUT_VALUES.map((v, i) => (
+              <Reveal as="article" className="value-card" key={v.k} delay={i * 110}>
+                <span className="value-k">{v.k}</span>
+                <h3>{L(v.t)}</h3>
+                <p>{L(v.p)}</p>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="chapter chapter-craft" id="craft">
         <div className="pattern-bg"></div>
         <div className="chapter-inner">
-          <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER II", ar: "الفصل الثاني" })}</Reveal>
-          <Reveal as="h2" className="chapter-title">{L({ en: "The Craft", ar: "الإتقان" })}</Reveal>
-          <Reveal className="chapter-rule"></Reveal>
-          <Reveal as="p" className="craft-lead">{L({ en: "Every Shatherwan home is built to be lived in for generations — quality you can see, and quality you can feel.", ar: "كل منزل من الشاذروان يُبنى ليُسكن لأجيال — جودة تراها بعينك، وجودة تلمسها بإحساسك." })}</Reveal>
+          <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER IV", ar: "الفصل الرابع" })}</Reveal>
+          <Reveal as="h2" className="chapter-title" delay={70}>{L({ en: "The Craft", ar: "الإتقان" })}</Reveal>
+          <Reveal className="chapter-rule" delay={130}></Reveal>
+          <Reveal as="p" className="craft-lead" delay={180}>{L({ en: "Every Shatherwan home is built to be lived in for generations — quality you can see, and quality you can feel.", ar: "كل منزل من الشاذروان يُبنى ليُسكن لأجيال — جودة تراها بعينك، وجودة تلمسها بإحساسك." })}</Reveal>
           <div className="craft-grid">
             <Reveal as="figure" className="craft-item">
               <div className="craft-img"><img src="/assets/detail-balconies.jpg" alt="Balcony detail" /></div>
               <figcaption>{L({ en: "The Balconies", ar: "الشرفات" })}</figcaption>
             </Reveal>
-            <Reveal as="figure" className="craft-item delay">
+            <Reveal as="figure" className="craft-item" delay={160}>
               <div className="craft-img"><img src="/assets/detail-entrance.jpg" alt="Entrance colonnade" /></div>
               <figcaption>{L({ en: "The Entrance", ar: "المدخل" })}</figcaption>
             </Reveal>
           </div>
-          <Reveal className="craft-values">
+          <Reveal className="craft-values" delay={120}>
             <span>{L({ en: "QUALITY", ar: "الجودة" })}</span><span className="dot">·</span>
             <span>{L({ en: "COMFORT", ar: "الراحة" })}</span><span className="dot">·</span>
             <span>{L({ en: "LASTING VALUE", ar: "قيمة تدوم" })}</span>
@@ -188,13 +294,13 @@ export function About() {
       <section className="chapter chapter-process" id="process">
         <div className="pattern-bg"></div>
         <div className="chapter-inner wide">
-          <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER III", ar: "الفصل الثالث" })}</Reveal>
-          <Reveal as="h2" className="chapter-title">{L({ en: "How We Build", ar: "كيف نبني" })}</Reveal>
-          <Reveal className="chapter-rule"></Reveal>
-          <Reveal as="p" className="process-lead">{L({ en: "From the first survey to the final key — every Shatherwan home follows the same uncompromising path.", ar: "من أول مسح للأرض حتى تسليم المفتاح — كل منزل من الشاذروان يتبع النهج ذاته دون تنازل." })}</Reveal>
+          <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER V", ar: "الفصل الخامس" })}</Reveal>
+          <Reveal as="h2" className="chapter-title" delay={70}>{L({ en: "How We Build", ar: "كيف نبني" })}</Reveal>
+          <Reveal className="chapter-rule" delay={130}></Reveal>
+          <Reveal as="p" className="process-lead" delay={180}>{L({ en: "From the first survey to the final key — every Shatherwan home follows the same uncompromising path.", ar: "من أول مسح للأرض حتى تسليم المفتاح — كل منزل من الشاذروان يتبع النهج ذاته دون تنازل." })}</Reveal>
           <div className="process-grid">
-            {PROCESS.map((s) => (
-              <Reveal key={s.n} className="process-step">
+            {PROCESS.map((s, i) => (
+              <Reveal key={s.n} className="process-step" delay={i * 110}>
                 <div className="process-img"><img src={s.img} alt={L(s.t)} /></div>
                 <span className="process-n">{s.n}</span>
                 <h3>{L(s.t)}</h3>
@@ -202,6 +308,26 @@ export function About() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── closing invitation ── */}
+      <section className="chapter chapter-invite">
+        <div className="pattern-bg light"></div>
+        <div className="chapter-inner">
+          <Reveal as="p" className="chapter-num on-blue">{L({ en: "AN INVITATION", ar: "دعوة" })}</Reveal>
+          <Reveal as="h2" className="chapter-title on-blue" delay={70}>{L({ en: "Come and see it", ar: "تعال وشاهده" })}</Reveal>
+          <Reveal className="chapter-rule gold" delay={130}></Reveal>
+          <Reveal as="p" className="invite-lead" delay={180}>
+            {L({
+              en: "The stone, the light, the balconies — none of it photographs the way it feels in person. Spend forty-five minutes with us.",
+              ar: "الحجر، والضوء، والشرفات — لا تُنقل بالصور كما تُحسّ على الطبيعة. امنحنا خمساً وأربعين دقيقة.",
+            })}
+          </Reveal>
+          <Reveal className="invite-actions" delay={240}>
+            <Link to="/booking" className="btn-gold">{L({ en: "BOOK A PRIVATE VIEWING", ar: "احجز معاينة خاصة" })}</Link>
+            <Link to="/projects" className="btn-outline-gold">{L({ en: "SEE THE RESIDENCE", ar: "شاهد المشروع" })}</Link>
+          </Reveal>
         </div>
       </section>
     </>
@@ -389,8 +515,8 @@ export function Booking() {
               { t: { en: "Amman, Jordan", ar: "عمّان، الأردن" }, p: { en: "We'll send the exact location pin on WhatsApp as soon as your time is confirmed.", ar: "نرسل لك الموقع الدقيق على واتساب فور تأكيد موعدك." } },
             ].map((b, i) => (
               <div className="binfo" key={i}>
-                <h3>{useLangSafe(b.t)}</h3>
-                <p>{useLangSafe(b.p)}</p>
+                <h3>{langText(b.t)}</h3>
+                <p>{langText(b.p)}</p>
               </div>
             ))}
           </Reveal>
@@ -399,8 +525,8 @@ export function Booking() {
     </>
   );
 }
-// small helper avoiding hook misuse inside map (module-level access to context via window fallback)
-function useLangSafe(obj) {
+// plain helper (not a hook) so it can be called inside a map callback
+function langText(obj) {
   const lang = document.documentElement.lang === "ar" ? "ar" : "en";
   return obj[lang];
 }

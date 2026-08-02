@@ -1,6 +1,11 @@
 export const WHATSAPP = "962790489291"; // from the company's Facebook page
 export const wa = (msg) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 
+// TODO: replace with the company's real inbox — this is a placeholder.
+export const EMAIL = "info@alshatherwan.com";
+export const mailto = (subject, body) =>
+  `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
 export const PROPERTIES = {
   garden: {
     imgs: ["/assets/gallery-1719.jpg", "/assets/detail-entrance.jpg", "/assets/life-1.jpg", "/assets/ig-interior.jpg"],
@@ -114,6 +119,21 @@ export const FEATURES = [
   { n: "04", t: { en: "Prime Location", ar: "موقع مميز" }, p: { en: "Set in one of Amman's most desirable districts, minutes from everything that matters.", ar: "في واحدة من أرقى مناطق عمّان، على دقائق من كل ما يهمك." } },
 ];
 
+export const SERVICES = [
+  { n: "01", icon: "building", t: { en: "Residential Development", ar: "التطوير السكني" },
+    p: { en: "Our own land, our own build.", ar: "أرضنا، وبناؤنا." } },
+  { n: "02", icon: "key", t: { en: "Apartment Sales", ar: "بيع الشقق" },
+    p: { en: "Direct from the developer.", ar: "مباشرة من المطوّر." } },
+  { n: "03", icon: "trowel", t: { en: "Construction & Finishing", ar: "الإنشاء والتشطيب" },
+    p: { en: "Stone façades, premium finishes.", ar: "واجهات حجرية وتشطيب فاخر." } },
+  { n: "04", icon: "calendar", t: { en: "Private Viewings", ar: "المعاينات الخاصة" },
+    p: { en: "One-on-one, 45 minutes.", ar: "جولة فردية، ٤٥ دقيقة." } },
+  { n: "05", icon: "shield", t: { en: "After-Handover Care", ar: "خدمة ما بعد التسليم" },
+    p: { en: "We stay reachable.", ar: "نبقى على تواصل." } },
+  { n: "06", icon: "compass", t: { en: "Guidance for Buyers", ar: "إرشاد المشترين" },
+    p: { en: "Straight answers before you commit.", ar: "إجابات صريحة قبل أن تقرر." } },
+];
+
 export const SOCIAL = {
   instagram: "https://instagram.com/alshatherwan._",
   facebook: "https://web.facebook.com/p/%D8%A7%D9%84%D8%B4%D8%A7%D8%B0%D8%B1%D9%88%D8%A7%D9%86-%D9%84%D9%84%D8%A7%D8%B3%D9%83%D8%A7%D9%86-Shatherwan-Housing-61583853203737/",
@@ -122,7 +142,8 @@ export const SOCIAL = {
 
 export const SEARCH_INDEX = [
   { t: { en: "The Story", ar: "قصتنا" }, tag: { en: "Home", ar: "الرئيسية" }, href: "/#story", k: "story home history 2010 قصة تاريخ" },
-  { t: { en: "About — Vision & Mission", ar: "من نحن — رؤيتنا ورسالتنا" }, tag: { en: "About", ar: "من نحن" }, href: "/about", k: "about vision mission craft process من نحن رؤية رسالة" },
+  { t: { en: "About — Vision & Mission", ar: "من نحن — رؤيتنا ورسالتنا" }, tag: { en: "About", ar: "من نحن" }, href: "/about", k: "about vision mission craft process values من نحن رؤية رسالة قيم" },
+  { t: { en: "Our Services", ar: "خدماتنا" }, tag: { en: "Home", ar: "الرئيسية" }, href: "/#services", k: "services development sales construction finishing viewings خدمات تطوير بيع إنشاء تشطيب معاينة" },
   { t: { en: "Residence 1719", ar: "مشروع ١٧١٩" }, tag: { en: "Projects", ar: "مشاريع" }, href: "/projects", k: "residence 1719 apartment building شقة مشروع مبنى" },
   { t: { en: "Homes for Sale", ar: "شقق للبيع" }, tag: { en: "Listings", ar: "عروض" }, href: "/projects#homes", k: "homes sale apartments price buy شقق للبيع سعر شراء" },
   { t: { en: "3D Experience", ar: "تجربة ثلاثية الأبعاد" }, tag: { en: "3D", ar: "ثلاثي الأبعاد" }, href: "/tour", k: "3d building floor plan virtual tour مجسم مخطط جولة" },

@@ -25,16 +25,19 @@ export default function App() {
     <div className={isHome ? "" : "subpage"}>
       <ScrollManager />
       <Nav onSearch={() => setSearchOpen(true)} />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/booking" element={<Booking />} />
-        <Route path="/property/:id" element={<Property />} />
-        <Route path="/tour" element={<TourPage />} />
-        <Route path="*" element={<Home />} />
-      </Routes>
+      {/* keyed so each route cross-fades in rather than snapping */}
+      <div className="page-fade" key={pathname}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/booking" element={<Booking />} />
+          <Route path="/property/:id" element={<Property />} />
+          <Route path="/tour" element={<TourPage />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
+      </div>
       <Footer />
       <ChatWidget />
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />

@@ -3,20 +3,35 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLang } from "./lang.jsx";
 import { SOCIAL, SEARCH_INDEX, wa } from "./data.js";
 
-/* reveal-on-scroll wrapper: same .reveal/.visible classes as the CSS */
-export function Reveal({ as: Tag = "div", className = "", children, ...rest }) {
+/* reveal-on-scroll wrapper: same .reveal/.visible classes as the CSS.
+   `delay` (ms) staggers siblings; motion is skipped entirely for visitors
+   who ask for reduced motion. */
+export function Reveal({ as: Tag = "div", className = "", delay = 0, style, children, ...rest }) {
   const ref = useRef(null);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      el.classList.add("visible");
+      return;
+    }
     const ob = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) { el.classList.add("visible"); ob.disconnect(); } },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
     );
     ob.observe(el);
     return () => ob.disconnect();
   }, []);
-  return <Tag ref={ref} className={`reveal ${className}`} {...rest}>{children}</Tag>;
+  return (
+    <Tag
+      ref={ref}
+      className={`reveal ${className}`}
+      style={delay ? { ...style, transitionDelay: `${delay}ms` } : style}
+      {...rest}
+    >
+      {children}
+    </Tag>
+  );
 }
 
 export function Nav({ onSearch }) {
@@ -91,6 +106,7 @@ export function Footer() {
           <div className="fcol">
             <h4>{L({ en: "Explore", ar: "استكشف" })}</h4>
             <Link to="/about">{L({ en: "About", ar: "من نحن" })}</Link>
+            <Link to="/#services">{L({ en: "Services", ar: "خدماتنا" })}</Link>
             <Link to="/projects">{L({ en: "Projects", ar: "المشاريع" })}</Link>
             <Link to="/gallery">{L({ en: "Gallery", ar: "المعرض" })}</Link>
           </div>
@@ -126,7 +142,7 @@ export function Footer() {
 
 /* ── concierge chatbot ── */
 export function ChatWidget() {
-  const { lang, L } = useLang();
+  const { L } = useLang();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState([]);
   const [input, setInput] = useState("");

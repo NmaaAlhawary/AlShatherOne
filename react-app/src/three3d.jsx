@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
 import * as THREE from "three";
 import { Link } from "react-router-dom";
@@ -8,35 +8,90 @@ import { GALLERY_IMAGES, PROPERTIES } from "./data.js";
 
 const GOLD = "#c99a5b";
 
-/* ═══════════ 3D GALLERY RING ═══════════ */
-function RingPanels({ rotRef }) {
+/* ═══════════ 3D GALLERY CAROUSEL ═══════════
+   Every panel is the same size; the photograph is cropped to fill it
+   (the 3D equivalent of object-fit: cover) so nothing bulges out of the
+   ring. The front card is scaled up and lit; the rest recede. */
+
+const PANEL_W = 2.12, PANEL_H = 2.78, RING_R = 4.5;
+
+/** Crop a texture to a target aspect ratio, centred — like object-fit: cover. */
+function coverFit(tex, targetAspect) {
+  const img = tex.image;
+  if (!img || !img.width) return;
+  const imgAspect = img.width / img.height;
+  if (imgAspect > targetAspect) tex.repeat.set(targetAspect / imgAspect, 1);
+  else tex.repeat.set(1, imgAspect / targetAspect);
+  tex.offset.set((1 - tex.repeat.x) / 2, (1 - tex.repeat.y) / 2);
+}
+
+function RingPanels({ ctrl }) {
   const group = useRef();
+  const cards = useRef([]);
+  const imgMats = useRef([]);
+  const frameMats = useRef([]);
+  const reflMats = useRef([]);
+  const { gl } = useThree();
   const textures = useLoader(THREE.TextureLoader, GALLERY_IMAGES.map((i) => i.src));
-  textures.forEach((t) => (t.colorSpace = THREE.SRGBColorSpace));
-  useFrame(() => { if (group.current) group.current.rotation.y = rotRef.current.angle; });
-  const R = 4.1, N = GALLERY_IMAGES.length;
+  const N = GALLERY_IMAGES.length;
+
+  useMemo(() => {
+    const aniso = gl.capabilities.getMaxAnisotropy?.() ?? 1;
+    textures.forEach((t) => {
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = aniso;
+      t.minFilter = THREE.LinearMipmapLinearFilter;
+      t.generateMipmaps = true;
+      coverFit(t, PANEL_W / PANEL_H);
+      t.needsUpdate = true;
+    });
+  }, [textures, gl]);
+
+  useFrame(() => {
+    const c = ctrl.current;
+    if (group.current) group.current.rotation.y = c.angle;
+    for (let i = 0; i < N; i++) {
+      // 1 when this card faces the camera, 0 when it is edge-on or behind
+      const f = Math.max(0, Math.cos(i * c.step + c.angle));
+      const focus = f * f; // sharpen the falloff so the front card clearly leads
+      const g = cards.current[i];
+      if (g) {
+        const s = 0.82 + 0.18 * focus;
+        g.scale.set(s, s, 1);
+        g.position.y = 0.38 + focus * 0.16;
+      }
+      const im = imgMats.current[i];
+      if (im) im.opacity = 0.3 + 0.7 * f;
+      const fm = frameMats.current[i];
+      if (fm) fm.opacity = 0.16 + 0.74 * focus;
+      const rm = reflMats.current[i];
+      if (rm) rm.opacity = 0.04 + 0.14 * focus;
+    }
+  });
+
   return (
     <group ref={group}>
       {textures.map((t, i) => {
         const a = (i / N) * Math.PI * 2;
-        const pos = [Math.sin(a) * R, 0.45, Math.cos(a) * R];
-        const aspect = t.image ? t.image.width / t.image.height : 0.8;
-        const sx = aspect > 1 ? 1 : 0.8;
-        const sy = aspect > 1 ? 1 / aspect : 0.8 / aspect;
         return (
-          <group key={i} position={pos} rotation={[0, a, 0]}>
-            <mesh position={[0, 0, -0.015]} scale={[sx * 1.035, sy * 1.035, 1]}>
-              <planeGeometry args={[2.1, 2.65]} />
-              <meshBasicMaterial color={GOLD} />
-            </mesh>
-            <mesh scale={[sx, sy, 1]}>
-              <planeGeometry args={[2.1, 2.65]} />
-              <meshBasicMaterial map={t} />
-            </mesh>
-            <mesh position={[0, -2.85, 0]} scale={[sx, -sy, 1]}>
-              <planeGeometry args={[2.1, 2.65]} />
-              <meshBasicMaterial map={t} transparent opacity={0.14} />
-            </mesh>
+          <group key={i} position={[Math.sin(a) * RING_R, 0, Math.cos(a) * RING_R]} rotation={[0, a, 0]}>
+            <group ref={(el) => (cards.current[i] = el)}>
+              {/* gold hairline frame */}
+              <mesh position={[0, 0, -0.02]}>
+                <planeGeometry args={[PANEL_W + 0.085, PANEL_H + 0.085]} />
+                <meshBasicMaterial ref={(m) => (frameMats.current[i] = m)} color={GOLD} transparent opacity={0.6} />
+              </mesh>
+              {/* the photograph */}
+              <mesh>
+                <planeGeometry args={[PANEL_W, PANEL_H]} />
+                <meshBasicMaterial ref={(m) => (imgMats.current[i] = m)} map={t} transparent opacity={1} toneMapped={false} />
+              </mesh>
+              {/* mirrored reflection on the polished floor */}
+              <mesh position={[0, -PANEL_H - 0.14, 0]} scale={[1, -1, 1]}>
+                <planeGeometry args={[PANEL_W, PANEL_H]} />
+                <meshBasicMaterial ref={(m) => (reflMats.current[i] = m)} map={t} transparent opacity={0.12} depthWrite={false} />
+              </mesh>
+            </group>
           </group>
         );
       })}
@@ -44,50 +99,113 @@ function RingPanels({ rotRef }) {
   );
 }
 
-export function GalleryRing() {
-  const { lang } = useLang();
-  const rotRef = useRef({ angle: 0, vel: 0.0035, dragging: false, lastX: 0 });
-  const [caption, setCaption] = useState(GALLERY_IMAGES[0].caption);
+const FrameHook = ({ cb }) => { useFrame(cb); return null; };
 
-  const onFrame = () => {
-    const r = rotRef.current;
-    if (!r.dragging) {
-      r.angle += r.vel;
-      r.vel *= 0.99;
-      if (Math.abs(r.vel) < 0.0035) r.vel = Math.sign(r.vel || 1) * 0.0035;
-    }
-    let best = 0, bestScore = -Infinity;
-    GALLERY_IMAGES.forEach((_, i) => {
-      const s = Math.cos((i / GALLERY_IMAGES.length) * Math.PI * 2 + r.angle);
-      if (s > bestScore) { bestScore = s; best = i; }
-    });
-    setCaption((c) => (c === GALLERY_IMAGES[best].caption ? c : GALLERY_IMAGES[best].caption));
+export function GalleryRing() {
+  const { lang, L } = useLang();
+  const N = GALLERY_IMAGES.length;
+  const STEP = (Math.PI * 2) / N;
+  const stageRef = useRef(null);
+  const ctrl = useRef({ angle: 0, target: 0, step: STEP, dragging: false, lastX: 0, vel: 0, hold: false });
+  const [active, setActive] = useState(0);
+
+  const shift = (d) => { ctrl.current.target -= d * STEP; };
+  const goTo = (i) => {
+    const c = ctrl.current;
+    const base = -i * STEP;
+    // pick the rotation nearest the current one so it never spins the long way round
+    c.target = base + Math.round((c.target - base) / (Math.PI * 2)) * Math.PI * 2;
   };
 
+  // gentle auto-advance, paused while the visitor is interacting
+  useEffect(() => {
+    const id = setInterval(() => {
+      const c = ctrl.current;
+      if (!c.hold && !c.dragging) shift(1);
+    }, 5200);
+    return () => clearInterval(id);
+  }, []); // eslint-disable-line
+
+  const onFrame = () => {
+    const c = ctrl.current;
+    if (!c.dragging) c.angle += (c.target - c.angle) * 0.075;
+    const idx = ((Math.round(-c.angle / STEP) % N) + N) % N;
+    setActive((a) => (a === idx ? a : idx));
+  };
+
+  const down = (e) => {
+    const c = ctrl.current;
+    c.dragging = true; c.lastX = e.clientX; c.vel = 0;
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+  };
+  const move = (e) => {
+    const c = ctrl.current;
+    if (!c.dragging) return;
+    const dx = e.clientX - c.lastX;
+    c.angle += dx * 0.0062;
+    c.vel = dx * 0.0062;
+    c.target = c.angle;
+    c.lastX = e.clientX;
+  };
+  const up = () => {
+    const c = ctrl.current;
+    if (!c.dragging) return;
+    c.dragging = false;
+    const flick = Math.abs(c.vel) > 0.028 ? Math.sign(c.vel) : 0;
+    c.target = (Math.round(c.angle / STEP) + flick) * STEP;
+  };
+
+  const caption = GALLERY_IMAGES[active].caption;
+
   return (
-    <div
-      className="three-stage reveal visible"
-      onPointerDown={(e) => { const r = rotRef.current; r.dragging = true; r.lastX = e.clientX; }}
-      onPointerMove={(e) => { const r = rotRef.current; if (!r.dragging) return; r.angle += (e.clientX - r.lastX) * 0.006; r.vel = (e.clientX - r.lastX) * 0.0006; r.lastX = e.clientX; }}
-      onPointerUp={() => (rotRef.current.dragging = false)}
-      onPointerLeave={() => (rotRef.current.dragging = false)}
-    >
-      <Canvas camera={{ position: [0, 0.4, 10.5], fov: 38 }} onCreated={({ scene }) => {
-        scene.background = new THREE.Color("#071e2c");
-        scene.fog = new THREE.Fog("#071e2c", 7, 16);
-      }}>
-        <FrameHook cb={onFrame} />
-        <RingPanels rotRef={rotRef} />
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.22, 0]}>
-          <circleGeometry args={[11, 48]} />
-          <meshBasicMaterial color="#0a2536" transparent opacity={0.85} />
-        </mesh>
-      </Canvas>
-      <div className="three-caption">{caption[lang] ?? caption.en}</div>
+    <div className="gallery-viewer reveal visible">
+      <div
+        className="three-stage"
+        ref={stageRef}
+        tabIndex={0}
+        role="group"
+        aria-label={L({ en: "Photo carousel", ar: "معرض الصور" })}
+        onPointerDown={down}
+        onPointerMove={move}
+        onPointerUp={up}
+        onPointerCancel={up}
+        onPointerEnter={() => (ctrl.current.hold = true)}
+        onPointerLeave={() => { ctrl.current.hold = false; up(); }}
+        onFocus={() => (ctrl.current.hold = true)}
+        onBlur={() => (ctrl.current.hold = false)}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowRight") { shift(1); e.preventDefault(); }
+          if (e.key === "ArrowLeft") { shift(-1); e.preventDefault(); }
+        }}
+      >
+        <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: true }} camera={{ position: [0, 0.45, 11.4], fov: 34 }}>
+          <FrameHook cb={onFrame} />
+          <RingPanels ctrl={ctrl} />
+        </Canvas>
+        <div className="stage-vignette" aria-hidden="true"></div>
+        <button className="gal-nav prev" type="button" aria-label={L({ en: "Previous image", ar: "الصورة السابقة" })} onClick={() => shift(-1)}>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M15 5 8 12l7 7" /></svg>
+        </button>
+        <button className="gal-nav next" type="button" aria-label={L({ en: "Next image", ar: "الصورة التالية" })} onClick={() => shift(1)}>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="m9 5 7 7-7 7" /></svg>
+        </button>
+        <div className="three-caption" key={active}>{caption[lang] ?? caption.en}</div>
+      </div>
+      <div className="gal-dots">
+        {GALLERY_IMAGES.map((im, i) => (
+          <button
+            key={im.src}
+            type="button"
+            className={i === active ? "on" : ""}
+            aria-label={im.caption[lang] ?? im.caption.en}
+            aria-current={i === active}
+            onClick={() => goTo(i)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
-const FrameHook = ({ cb }) => { useFrame(cb); return null; };
 
 /* ═══════════ 3D EXPERIENCE (building / plan / tour) ═══════════ */
 
