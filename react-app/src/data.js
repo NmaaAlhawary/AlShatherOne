@@ -8,6 +8,17 @@ export const wa = (msg) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(
 
 // TODO: replace with the company's real inbox — this is a placeholder.
 export const EMAIL = "info@alshatherwan.com";
+
+export const PHONE = "07 9048 9291";
+
+// TODO: no street address has been confirmed for the company, so this stays at
+// city level. Add `street` + a real `maps` link once the exact location is known
+// — the concierge and the property page both read from here.
+export const LOCATION = {
+  city: { en: "Amman, Jordan", ar: "عمّان، الأردن" },
+  project: { en: "Residence 1719", ar: "مشروع ١٧١٩" },
+  maps: "https://www.google.com/maps/search/?api=1&query=Amman%2C+Jordan",
+};
 export const mailto = (subject, body) =>
   `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 

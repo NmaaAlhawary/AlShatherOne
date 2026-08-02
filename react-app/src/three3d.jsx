@@ -207,171 +207,519 @@ export function GalleryRing() {
   );
 }
 
-/* ═══════════ 3D EXPERIENCE (building / plan / tour) ═══════════ */
+const STONE = "#e3d8c4";
+const STONE_DK = "#cdbfa4";
+const TRIM = "#f0e8d8";
+const GLASS = "#7fa8c4";
 
-function Building({ onPick, selected }) {
-  const FH = 2.7, W = 11, D = 8.5;
-  const floors = [0, 1, 2, 3];
-  const unitIds = ["garden", "first", "second", "roof"];
-  const [hover, setHover] = useState(null);
+/* ── small reusable pieces ─────────────────────────────────── */
+
+/** A window: recessed reveal, frame, mullion, warm glass. */
+function Window({ w = 1.5, h = 1.35, lit = true }) {
   return (
     <group>
-      <mesh position={[0, -0.2, 0]} receiveShadow>
-        <cylinderGeometry args={[26, 26, 0.4, 48]} />
-        <meshStandardMaterial color="#0e2f42" roughness={0.9} />
+      <mesh position={[0, 0, -0.04]}>
+        <boxGeometry args={[w + 0.22, h + 0.22, 0.1]} />
+        <meshStandardMaterial color={TRIM} roughness={0.8} />
       </mesh>
-      {floors.map((f) => (
-        <group key={f} position={[0, FH / 2 + f * FH, 0]}>
-          <mesh
-            castShadow receiveShadow
-            onClick={(e) => { e.stopPropagation(); onPick(unitIds[f]); }}
-            onPointerOver={(e) => { e.stopPropagation(); setHover(f); document.body.style.cursor = "pointer"; }}
-            onPointerOut={() => { setHover(null); document.body.style.cursor = "auto"; }}
-          >
-            <boxGeometry args={[W, FH - 0.12, D]} />
-            <meshStandardMaterial
-              color="#dfd4bf" roughness={0.8}
-              emissive={hover === f || selected === unitIds[f] ? "#33507a" : "#000000"}
-            />
-          </mesh>
-          {[1, -1].map((side) =>
-            [0, 1, 2, 3].map((i) => (
-              <mesh key={`${side}${i}`} position={[-3.9 + i * 2.6, 0.05, side * (D / 2 + 0.02)]}>
-                <boxGeometry args={[1.5, 1.35, 0.12]} />
-                <meshStandardMaterial color="#2a2417" emissive="#ffd9a0" emissiveIntensity={(i + f) % 4 === 3 ? 0.15 : 1.1} />
-              </mesh>
-            ))
-          )}
-          <mesh position={[-0.6, -FH / 2 + 0.4, D / 2 + 0.8]} castShadow>
-            <boxGeometry args={[W * 0.72, 0.16, 1.5]} />
-            <meshStandardMaterial color="#cbbda0" roughness={0.7} />
-          </mesh>
-          <mesh position={[-0.6, -FH / 2 + 0.85, D / 2 + 1.5]}>
-            <boxGeometry args={[W * 0.72, 0.7, 0.05]} />
-            <meshPhysicalMaterial color="#bcd6e2" transparent opacity={0.32} roughness={0.1} />
-          </mesh>
-          <mesh position={[-0.6, -FH / 2 + 0.3, D / 2 + 0.8]}>
-            <boxGeometry args={[W * 0.72, 0.05, 1.4]} />
-            <meshStandardMaterial color="#000000" emissive="#ffd9a0" emissiveIntensity={1.6} />
-          </mesh>
-        </group>
-      ))}
-      <mesh position={[3.2, 2.5, D / 2 + 1.2]} castShadow>
-        <boxGeometry args={[3.4, 0.3, 2.4]} />
-        <meshStandardMaterial color="#cbbda0" />
+      <mesh>
+        <boxGeometry args={[w, h, 0.06]} />
+        <meshStandardMaterial
+          color="#1b1610"
+          emissive={lit ? "#ffcf8f" : "#12233a"}
+          emissiveIntensity={lit ? 1.15 : 0.25}
+          roughness={0.35}
+        />
       </mesh>
-      {[-1.3, 1.3].map((dx) => (
-        <mesh key={dx} position={[3.2 + dx, 1.2, D / 2 + 2]} castShadow>
-          <cylinderGeometry args={[0.16, 0.18, 2.4, 12]} />
-          <meshStandardMaterial color="#dfd4bf" />
+      {/* mullions */}
+      <mesh position={[0, 0, 0.045]}>
+        <boxGeometry args={[0.045, h, 0.04]} />
+        <meshStandardMaterial color="#2a2620" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 0, 0.045]}>
+        <boxGeometry args={[w, 0.045, 0.04]} />
+        <meshStandardMaterial color="#2a2620" roughness={0.7} />
+      </mesh>
+      {/* sill */}
+      <mesh position={[0, -h / 2 - 0.14, 0.06]}>
+        <boxGeometry args={[w + 0.34, 0.1, 0.26]} />
+        <meshStandardMaterial color={TRIM} roughness={0.75} />
+      </mesh>
+    </group>
+  );
+}
+
+/** Balcony slab with a glass balustrade and a gold handrail. */
+function Balcony({ w, depth = 1.5 }) {
+  return (
+    <group>
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[w, 0.16, depth]} />
+        <meshStandardMaterial color={STONE_DK} roughness={0.85} />
+      </mesh>
+      {/* soffit light strip — the warm line that reads on the real façade */}
+      <mesh position={[0, -0.1, 0]}>
+        <boxGeometry args={[w * 0.94, 0.04, depth * 0.88]} />
+        <meshStandardMaterial color="#000000" emissive="#ffc98a" emissiveIntensity={2.2} />
+      </mesh>
+      <mesh position={[0, 0.55, depth / 2 - 0.03]}>
+        <boxGeometry args={[w, 0.95, 0.04]} />
+        <meshPhysicalMaterial color={GLASS} transparent opacity={0.26} roughness={0.08} metalness={0.1} />
+      </mesh>
+      <mesh position={[0, 1.05, depth / 2 - 0.03]}>
+        <boxGeometry args={[w, 0.06, 0.09]} />
+        <meshStandardMaterial color={GOLD} roughness={0.35} metalness={0.6} />
+      </mesh>
+      {[-1, 1].map((s) => (
+        <mesh key={s} position={[(s * w) / 2, 0.55, 0]}>
+          <boxGeometry args={[0.05, 0.95, depth]} />
+          <meshPhysicalMaterial color={GLASS} transparent opacity={0.22} roughness={0.08} />
         </mesh>
-      ))}
-      <mesh position={[0, 4 * FH + 0.12, 0]} castShadow>
-        <boxGeometry args={[W + 0.5, 0.25, D + 0.5]} />
-        <meshStandardMaterial color="#cbbda0" />
-      </mesh>
-      {[[-8.5, 6], [8.8, 5.4], [-9, -5], [9, -5.5]].map(([tx, tz]) => (
-        <group key={`${tx}${tz}`}>
-          <mesh position={[tx, 0.8, tz]}><cylinderGeometry args={[0.12, 0.18, 1.6, 8]} /><meshStandardMaterial color="#4a3826" /></mesh>
-          <mesh position={[tx, 2.2, tz]} castShadow><sphereGeometry args={[1.25, 12, 10]} /><meshStandardMaterial color="#1d3b2a" roughness={1} /></mesh>
-        </group>
       ))}
     </group>
   );
 }
 
-function FloorPlan() {
-  const planTex = useLoader(THREE.TextureLoader, asset("/assets/plan-tex.jpg"));
-  planTex.colorSpace = THREE.SRGBColorSpace;
-  const PW = 14, PD = 14 * (590 / 850), T = 0.18;
-  const walls = [
-    [0, -PD / 2 + T / 2, PW, T], [0, PD / 2 - T / 2, PW, T],
-    [-PW / 2 + T / 2, 0, T, PD], [PW / 2 - T / 2, 0, T, PD],
-    [0.55, 1.15, T, PD * 0.52], [3.9, -0.15, PW * 0.44, T],
-    [2.6, 2.6, PW * 0.3, T], [-1.6, 2.2, T, PD * 0.33],
-  ];
-  const labels = [
-    { p: [-3.4, 1.6, 0.6], en: "Living · Dining · Kitchen", ar: "معيشة · سفرة · مطبخ" },
-    { p: [2.5, 1.4, 1.8], en: "Bedroom", ar: "غرفة نوم" },
-    { p: [3.9, 1.3, -2.6], en: "Balcony", ar: "شرفة" },
-    { p: [4.6, 1.3, 3.4], en: "Bathroom", ar: "حمام" },
-  ];
+/** Stone pilaster with a capital, used on the corners. */
+function Pilaster({ h }) {
   return (
     <group>
+      <mesh castShadow>
+        <boxGeometry args={[0.62, h, 0.62]} />
+        <meshStandardMaterial color={TRIM} roughness={0.85} />
+      </mesh>
+      <mesh position={[0, h / 2 - 0.12, 0]}>
+        <boxGeometry args={[0.82, 0.2, 0.82]} />
+        <meshStandardMaterial color={STONE} roughness={0.8} />
+      </mesh>
+      <mesh position={[0, -h / 2 + 0.12, 0]}>
+        <boxGeometry args={[0.82, 0.2, 0.82]} />
+        <meshStandardMaterial color={STONE} roughness={0.8} />
+      </mesh>
+    </group>
+  );
+}
+
+function Tree({ pos, scale = 1 }) {
+  return (
+    <group position={pos} scale={scale}>
+      <mesh position={[0, 0.85, 0]} castShadow>
+        <cylinderGeometry args={[0.1, 0.16, 1.7, 8]} />
+        <meshStandardMaterial color="#4a3826" roughness={1} />
+      </mesh>
+      <mesh position={[0, 2.15, 0]} castShadow>
+        <sphereGeometry args={[1.1, 14, 12]} />
+        <meshStandardMaterial color="#1f4030" roughness={1} />
+      </mesh>
+      <mesh position={[0.45, 1.72, 0.24]} castShadow>
+        <sphereGeometry args={[0.72, 12, 10]} />
+        <meshStandardMaterial color="#244834" roughness={1} />
+      </mesh>
+    </group>
+  );
+}
+
+/* ═══════════ TAB 1 — THE BUILDING ═══════════ */
+
+function Building({ onPick, selected }) {
+  const FH = 2.7, W = 11, D = 8.5, FLOORS = 4;
+  const unitIds = ["garden", "first", "second", "roof"];
+  const [hover, setHover] = useState(null);
+  const winX = [-3.9, -1.3, 1.3, 3.9];
+
+  return (
+    <group>
+      {/* ground */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.42, 0]} receiveShadow>
+        <circleGeometry args={[34, 56]} />
+        <meshStandardMaterial color="#0d2a3c" roughness={1} />
+      </mesh>
+      {/* podium + steps */}
+      <mesh position={[0, -0.2, 0]} receiveShadow castShadow>
+        <boxGeometry args={[W + 3.2, 0.45, D + 3.2]} />
+        <meshStandardMaterial color="#20323f" roughness={0.75} />
+      </mesh>
+      {[0, 1, 2].map((i) => (
+        <mesh key={i} position={[0, -0.06 - i * 0.16, D / 2 + 2.0 + i * 0.42]} receiveShadow>
+          <boxGeometry args={[5.4 - i * 0.3, 0.16, 0.84]} />
+          <meshStandardMaterial color={STONE_DK} roughness={0.9} />
+        </mesh>
+      ))}
+
+      {/* floors */}
+      {[0, 1, 2, 3].map((f) => {
+        const active = hover === f || selected === unitIds[f];
+        return (
+          <group key={f} position={[0, FH / 2 + f * FH, 0]}>
+            {/* main stone volume — the click target */}
+            <mesh
+              castShadow receiveShadow
+              onClick={(e) => { e.stopPropagation(); onPick(unitIds[f]); }}
+              onPointerOver={(e) => { e.stopPropagation(); setHover(f); document.body.style.cursor = "pointer"; }}
+              onPointerOut={() => { setHover(null); document.body.style.cursor = "auto"; }}
+            >
+              <boxGeometry args={[W, FH - 0.14, D]} />
+              <meshStandardMaterial
+                color={STONE}
+                roughness={0.88}
+                emissive={active ? GOLD : "#000000"}
+                emissiveIntensity={active ? 0.22 : 0}
+              />
+            </mesh>
+
+            {/* floor cornice band */}
+            <mesh position={[0, -FH / 2 + 0.1, 0]} castShadow>
+              <boxGeometry args={[W + 0.34, 0.2, D + 0.34]} />
+              <meshStandardMaterial color={TRIM} roughness={0.82} />
+            </mesh>
+
+            {/* corner pilasters */}
+            {[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([sx, sz]) => (
+              <group key={`${sx}${sz}`} position={[(sx * W) / 2, 0, (sz * D) / 2]}>
+                <Pilaster h={FH - 0.16} />
+              </group>
+            ))}
+
+            {/* windows front + back */}
+            {[1, -1].map((side) =>
+              winX.map((x, i) => (
+                <group key={`${side}${i}`} position={[x, 0.06, side * (D / 2 + 0.06)]} rotation={[0, side > 0 ? 0 : Math.PI, 0]}>
+                  <Window lit={(i + f) % 5 !== 3} />
+                </group>
+              ))
+            )}
+            {/* windows on the side elevations */}
+            {[1, -1].map((side) =>
+              [-2.1, 2.1].map((z, i) => (
+                <group key={`s${side}${i}`} position={[side * (W / 2 + 0.06), 0.06, z]} rotation={[0, (side * Math.PI) / 2, 0]}>
+                  <Window w={1.2} lit={(i + f) % 3 !== 2} />
+                </group>
+              ))
+            )}
+
+            {/* front balcony */}
+            <group position={[-0.6, -FH / 2 + 0.42, D / 2 + 0.82]}>
+              <Balcony w={W * 0.66} depth={1.6} />
+            </group>
+            {/* rear balcony, shallower */}
+            <group position={[0.4, -FH / 2 + 0.42, -(D / 2 + 0.62)]}>
+              <Balcony w={W * 0.42} depth={1.2} />
+            </group>
+          </group>
+        );
+      })}
+
+      {/* entrance canopy + columns */}
+      <group position={[3.3, 0, D / 2 + 1.35]}>
+        <mesh position={[0, 2.62, 0]} castShadow>
+          <boxGeometry args={[3.8, 0.26, 2.7]} />
+          <meshStandardMaterial color={TRIM} roughness={0.8} />
+        </mesh>
+        <mesh position={[0, 2.44, 0]}>
+          <boxGeometry args={[3.4, 0.05, 2.3]} />
+          <meshStandardMaterial color="#000000" emissive="#ffc98a" emissiveIntensity={2.4} />
+        </mesh>
+        {[-1.5, 1.5].map((dx) => (
+          <group key={dx} position={[dx, 1.2, 0.95]}>
+            <mesh castShadow><cylinderGeometry args={[0.19, 0.22, 2.4, 16]} /><meshStandardMaterial color={TRIM} roughness={0.85} /></mesh>
+            <mesh position={[0, 1.28, 0]}><boxGeometry args={[0.56, 0.16, 0.56]} /><meshStandardMaterial color={STONE} roughness={0.8} /></mesh>
+            <mesh position={[0, -1.24, 0]}><boxGeometry args={[0.56, 0.16, 0.56]} /><meshStandardMaterial color={STONE} roughness={0.8} /></mesh>
+          </group>
+        ))}
+        {/* glazed lobby door */}
+        <mesh position={[0, 1.15, -0.1]}>
+          <boxGeometry args={[2.3, 2.3, 0.08]} />
+          <meshStandardMaterial color="#12233a" emissive="#ffd9a8" emissiveIntensity={0.85} roughness={0.2} />
+        </mesh>
+      </group>
+
+      {/* roof: slab, parapet, penthouse */}
+      <group position={[0, FLOORS * FH, 0]}>
+        <mesh position={[0, 0.14, 0]} castShadow>
+          <boxGeometry args={[W + 0.7, 0.28, D + 0.7]} />
+          <meshStandardMaterial color={TRIM} roughness={0.82} />
+        </mesh>
+        {[[0, (D + 0.4) / 2], [0, -(D + 0.4) / 2]].map(([x, z], i) => (
+          <mesh key={`p${i}`} position={[x, 0.62, z]} castShadow>
+            <boxGeometry args={[W + 0.7, 0.68, 0.18]} />
+            <meshStandardMaterial color={STONE} roughness={0.85} />
+          </mesh>
+        ))}
+        {[-1, 1].map((s) => (
+          <mesh key={s} position={[(s * (W + 0.4)) / 2, 0.62, 0]} castShadow>
+            <boxGeometry args={[0.18, 0.68, D + 0.7]} />
+            <meshStandardMaterial color={STONE} roughness={0.85} />
+          </mesh>
+        ))}
+        <mesh position={[-2.6, 1.05, -1.2]} castShadow>
+          <boxGeometry args={[3.6, 1.6, 3.2]} />
+          <meshStandardMaterial color={STONE} roughness={0.86} />
+        </mesh>
+        <mesh position={[-2.6, 1.05, -1.2 + 1.62]}>
+          <boxGeometry args={[2.2, 1.0, 0.06]} />
+          <meshStandardMaterial color="#1b1610" emissive="#ffcf8f" emissiveIntensity={0.9} />
+        </mesh>
+      </group>
+
+      {/* landscaping */}
+      {[[-6.4, D / 2 + 2.2], [6.4, D / 2 + 2.2], [-6.4, -(D / 2 + 1.6)], [6.4, -(D / 2 + 1.6)]].map(([x, z]) => (
+        <mesh key={`h${x}${z}`} position={[x, 0.28, z]} castShadow receiveShadow>
+          <boxGeometry args={[3.2, 0.7, 1.1]} />
+          <meshStandardMaterial color="#1d3b2a" roughness={1} />
+        </mesh>
+      ))}
+      <Tree pos={[-9.4, 0, 6.2]} />
+      <Tree pos={[9.6, 0, 5.4]} scale={0.88} />
+      <Tree pos={[-9.8, 0, -5.2]} scale={0.94} />
+      <Tree pos={[9.9, 0, -5.6]} />
+      {/* path lights */}
+      {[-4.6, -1.6, 1.6, 4.6].map((x) => (
+        <mesh key={`l${x}`} position={[x, 0.12, D / 2 + 3.4]}>
+          <cylinderGeometry args={[0.12, 0.12, 0.16, 10]} />
+          <meshStandardMaterial color="#000000" emissive="#ffc98a" emissiveIntensity={2.4} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+/* ═══════════ TAB 2 — 3D FLOOR PLAN ═══════════ */
+
+const PW = 14, PD = 14 * (590 / 850), WT = 0.18;
+
+// Clickable rooms. Sizes are indicative of the published 185–235 m² layouts.
+const ROOMS = [
+  {
+    id: "living", x: -3.2, z: 0.5, w: 6.6, d: 6.2,
+    t: { en: "Living · Dining · Kitchen", ar: "معيشة · سفرة · مطبخ" },
+    area: "48 m²",
+    p: { en: "One open volume running the depth of the apartment — the kitchen at the back, dining in the middle, and the living room opening onto the balcony.", ar: "مساحة مفتوحة تمتد بعمق الشقة — المطبخ في الخلف، والسفرة في الوسط، والصالون يفتح على الشرفة." },
+  },
+  {
+    id: "master", x: 2.6, z: 1.7, w: 3.6, d: 3.4,
+    t: { en: "Master Bedroom", ar: "غرفة النوم الرئيسية" },
+    area: "22 m²",
+    p: { en: "The principal suite, with its own ensuite bathroom, a fitted closet wall, and a door straight onto the balcony.", ar: "الجناح الرئيسي بحمام خاص، وخزائن مدمجة، وباب يفتح مباشرة على الشرفة." },
+  },
+  {
+    id: "bedroom2", x: 2.8, z: -2.3, w: 3.4, d: 2.8,
+    t: { en: "Second Bedroom", ar: "غرفة النوم الثانية" },
+    area: "16 m²",
+    p: { en: "A full double room on the quiet side of the plan, away from the living space.", ar: "غرفة مزدوجة كاملة في الجهة الهادئة من المخطط، بعيداً عن مساحة المعيشة." },
+  },
+  {
+    id: "bath", x: 5.2, z: 3.1, w: 2.3, d: 2.2,
+    t: { en: "Bathroom", ar: "الحمام" },
+    area: "6 m²",
+    p: { en: "Fully tiled floor to ceiling, with a window for natural light and ventilation.", ar: "مكسو بالكامل من الأرض حتى السقف، مع نافذة للإضاءة والتهوية الطبيعية." },
+  },
+  {
+    id: "balcony", x: 0.4, z: -4.0, w: 9.5, d: 1.6,
+    t: { en: "Balcony", ar: "الشرفة" },
+    area: "12 m²",
+    p: { en: "A deep terrace running most of the façade — wide enough for a table and chairs, not just a railing.", ar: "شرفة عميقة تمتد على معظم الواجهة — تتسع لطاولة وكراسي، وليست مجرد درابزين." },
+  },
+];
+
+function FloorPlan({ onPick, selected }) {
+  const planTex = useLoader(THREE.TextureLoader, asset("/assets/plan-tex.jpg"));
+  planTex.colorSpace = THREE.SRGBColorSpace;
+  const [hover, setHover] = useState(null);
+
+  const walls = [
+    [0, -PD / 2 + WT / 2, PW, WT], [0, PD / 2 - WT / 2, PW, WT],
+    [-PW / 2 + WT / 2, 0, WT, PD], [PW / 2 - WT / 2, 0, WT, PD],
+    [0.55, 1.15, WT, PD * 0.52], [3.9, -0.15, PW * 0.44, WT],
+    [2.6, 2.6, PW * 0.3, WT], [-1.6, 2.2, WT, PD * 0.33],
+  ];
+
+  return (
+    <group>
+      {/* slab with the plan drawing on top */}
       <mesh receiveShadow>
         <boxGeometry args={[PW, 0.22, PD]} />
-        <meshStandardMaterial attach="material-0" color="#ffffff" />
-        <meshStandardMaterial attach="material-1" color="#ffffff" />
+        {[0, 1].map((i) => <meshStandardMaterial key={i} attach={`material-${i}`} color="#ffffff" />)}
         <meshStandardMaterial attach="material-2" map={planTex} />
-        <meshStandardMaterial attach="material-3" color="#ffffff" />
-        <meshStandardMaterial attach="material-4" color="#ffffff" />
-        <meshStandardMaterial attach="material-5" color="#ffffff" />
+        {[3, 4, 5].map((i) => <meshStandardMaterial key={i} attach={`material-${i}`} color="#ffffff" />)}
       </mesh>
+
       {walls.map(([x, z, w, d], i) => (
         <mesh key={i} position={[x, 0.685, z]} castShadow receiveShadow>
           <boxGeometry args={[w, 1.15, d]} />
           <meshStandardMaterial color={i < 4 ? "#ffffff" : "#eae2d2"} roughness={0.65} />
         </mesh>
       ))}
+
+      {/* clickable room zones */}
+      {ROOMS.map((r) => {
+        const on = hover === r.id || selected === r.id;
+        return (
+          <group key={r.id}>
+            <mesh
+              position={[r.x, 0.13, r.z]}
+              rotation={[-Math.PI / 2, 0, 0]}
+              onClick={(e) => { e.stopPropagation(); onPick(r.id); }}
+              onPointerOver={(e) => { e.stopPropagation(); setHover(r.id); document.body.style.cursor = "pointer"; }}
+              onPointerOut={() => { setHover(null); document.body.style.cursor = "auto"; }}
+            >
+              <planeGeometry args={[r.w, r.d]} />
+              <meshBasicMaterial color={GOLD} transparent opacity={on ? 0.34 : 0.06} />
+            </mesh>
+            {on && (
+              <mesh position={[r.x, 0.135, r.z]} rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[Math.min(r.w, r.d) * 0.46, Math.min(r.w, r.d) * 0.5, 32]} />
+                <meshBasicMaterial color={GOLD} transparent opacity={0.75} />
+              </mesh>
+            )}
+          </group>
+        );
+      })}
+
+      {/* furniture blocks */}
       <mesh position={[-4.6, 0.46, 0.4]} castShadow><boxGeometry args={[2.6, 0.5, 1]} /><meshStandardMaterial color="#cfc4ad" /></mesh>
       <mesh position={[-3.4, 0.41, 1.4]} castShadow><cylinderGeometry args={[0.5, 0.5, 0.4, 20]} /><meshStandardMaterial color={GOLD} /></mesh>
       <mesh position={[2.5, 0.44, 1.8]} castShadow><boxGeometry args={[1.8, 0.45, 2.1]} /><meshStandardMaterial color="#d9d0bd" /></mesh>
-      {labels.map((l, i) => (
-        <group key={i}>
-          <Text position={l.p} fontSize={0.42} color="#123a52" anchorX="center" outlineWidth={0.012} outlineColor="#f9f7f3">{l.en}</Text>
-          <Text position={[l.p[0], l.p[1] - 0.5, l.p[2]]} fontSize={0.4} color="#123a52" anchorX="center" outlineWidth={0.012} outlineColor="#f9f7f3">{l.ar}</Text>
-        </group>
+      <mesh position={[2.8, 0.4, -2.3]} castShadow><boxGeometry args={[1.5, 0.4, 1.9]} /><meshStandardMaterial color="#d9d0bd" /></mesh>
+
+      {ROOMS.map((r) => (
+        <Text
+          key={`t${r.id}`}
+          position={[r.x, 1.45, r.z]}
+          fontSize={0.4}
+          color="#123a52"
+          anchorX="center"
+          outlineWidth={0.014}
+          outlineColor="#f9f7f3"
+        >
+          {r.t.en}
+        </Text>
       ))}
     </group>
   );
 }
 
-function TourRoom() {
-  const [aerial, life1, life5, g1719, finished] = useLoader(THREE.TextureLoader, [
-    asset("/assets/ig-aerial.jpg"), asset("/assets/life-1.jpg"), asset("/assets/life-5.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/ig-finished.jpg"),
-  ]);
-  [aerial, life1, life5, g1719, finished].forEach((t) => (t.colorSpace = THREE.SRGBColorSpace));
-  const RW = 9, RD = 9, RH = 3.2;
-  const Art = ({ tx, pos, ry, w = 1.7 }) => (
-    <group position={pos} rotation={[0, ry, 0]}>
-      <mesh position={[0, 0, -0.035]}><boxGeometry args={[w + 0.14, w * 1.25 + 0.14, 0.05]} /><meshStandardMaterial color={GOLD} /></mesh>
-      <mesh><planeGeometry args={[w, w * 1.25]} /><meshBasicMaterial map={tx} /></mesh>
-    </group>
-  );
+/* ═══════════ TAB 3 — VIRTUAL TOUR ═══════════ */
+
+const RW = 10, RD = 10, RH = 3.3;
+
+/** Framed picture with a mat, a gold frame and a little picture light.
+    Keep w * 1.28 + the hang height inside RH — anything taller punches
+    through the floor and ceiling. */
+function Art({ tx, pos, ry, w = 1.32 }) {
+  const h = w * 1.28;
   return (
-    <group>
-      <mesh position={[0, RH / 2, 0]}>
-        <boxGeometry args={[RW, RH, RD]} />
-        <meshStandardMaterial color="#f1ebdf" roughness={0.9} side={THREE.BackSide} />
+    <group position={pos} rotation={[0, ry, 0]}>
+      <mesh position={[0, 0, -0.06]} castShadow>
+        <boxGeometry args={[w + 0.3, h + 0.3, 0.08]} />
+        <meshStandardMaterial color={GOLD} roughness={0.4} metalness={0.45} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-        <planeGeometry args={[RW, RD]} />
-        <meshStandardMaterial color="#b99b72" roughness={0.65} />
+      <mesh position={[0, 0, -0.02]}>
+        <planeGeometry args={[w + 0.16, h + 0.16]} />
+        <meshStandardMaterial color="#faf6ee" roughness={0.9} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
-        <circleGeometry args={[2.2, 40]} />
-        <meshStandardMaterial color="#e4dccb" />
+      <mesh>
+        <planeGeometry args={[w, h]} />
+        <meshBasicMaterial map={tx} toneMapped={false} />
       </mesh>
-      <mesh position={[0, 1.7, -RD / 2 + 0.02]}>
-        <planeGeometry args={[4.6, 2.5]} />
-        <meshBasicMaterial map={aerial} />
+      {/* picture light */}
+      <mesh position={[0, h / 2 + 0.3, 0.22]}>
+        <boxGeometry args={[w * 0.5, 0.07, 0.16]} />
+        <meshStandardMaterial color="#caa96f" metalness={0.6} roughness={0.35} />
       </mesh>
-      <Art tx={life1} pos={[-RW / 2 + 0.05, 1.75, -1.4]} ry={Math.PI / 2} />
-      <Art tx={life5} pos={[-RW / 2 + 0.05, 1.75, 1.6]} ry={Math.PI / 2} />
-      <Art tx={g1719} pos={[RW / 2 - 0.05, 1.75, 0]} ry={-Math.PI / 2} w={2} />
-      <Art tx={finished} pos={[0, 1.75, RD / 2 - 0.05]} ry={Math.PI} w={1.9} />
-      <mesh position={[-0.2, 0.33, 1.6]}><boxGeometry args={[2.8, 0.65, 1.1]} /><meshStandardMaterial color="#ded5c2" roughness={0.95} /></mesh>
-      <mesh position={[-0.2, 0.9, 2.1]}><boxGeometry args={[2.8, 0.55, 0.25]} /><meshStandardMaterial color="#ded5c2" roughness={0.95} /></mesh>
-      <mesh position={[-0.2, 0.2, 0.2]}><cylinderGeometry args={[0.55, 0.55, 0.36, 24]} /><meshStandardMaterial color="#123a52" roughness={0.3} /></mesh>
+      <pointLight color="#ffe3b8" intensity={5} distance={4.5} position={[0, h / 2 + 0.1, 0.6]} />
     </group>
   );
 }
 
+function TourRoom() {
+  const [aerial, life1, life5, g1719, finished, interior] = useLoader(THREE.TextureLoader, [
+    asset("/assets/ig-aerial.jpg"), asset("/assets/life-1.jpg"), asset("/assets/life-5.jpg"),
+    asset("/assets/gallery-1719.jpg"), asset("/assets/ig-finished.jpg"), asset("/assets/ig-interior.jpg"),
+  ]);
+  [aerial, life1, life5, g1719, finished, interior].forEach((t) => (t.colorSpace = THREE.SRGBColorSpace));
+
+  return (
+    <group>
+      {/* shell — walls only; the ceiling gets its own brighter plane so it
+          doesn't read as a heavy brown mass overhead */}
+      <mesh position={[0, RH / 2, 0]}>
+        <boxGeometry args={[RW, RH, RD]} />
+        <meshStandardMaterial color="#f4eee4" roughness={0.96} side={THREE.BackSide} />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, RH - 0.01, 0]}>
+        <planeGeometry args={[RW, RD]} />
+        <meshStandardMaterial color="#fdfaf4" roughness={1} emissive="#fff4e4" emissiveIntensity={0.16} />
+      </mesh>
+      {/* timber floor + rug */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]} receiveShadow>
+        <planeGeometry args={[RW, RD]} />
+        <meshStandardMaterial color="#a9855e" roughness={0.55} metalness={0.05} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0.6]}>
+        <planeGeometry args={[6.2, 4.6]} />
+        <meshStandardMaterial color="#e6ded0" roughness={0.95} />
+      </mesh>
+      {/* skirting + cornice on all four walls */}
+      {[[0, RD / 2 - 0.05, 0], [0, -RD / 2 + 0.05, Math.PI], [RW / 2 - 0.05, 0, -Math.PI / 2], [-RW / 2 + 0.05, 0, Math.PI / 2]].map(([x, z, ry], i) => (
+        <group key={i} position={[x, 0, z]} rotation={[0, ry, 0]}>
+          <mesh position={[0, 0.07, 0]}>
+            <boxGeometry args={[i < 2 ? RW : RD, 0.14, 0.06]} />
+            <meshStandardMaterial color="#fbf7ef" roughness={0.9} />
+          </mesh>
+          <mesh position={[0, RH - 0.12, 0]}>
+            <boxGeometry args={[i < 2 ? RW : RD, 0.16, 0.09]} />
+            <meshStandardMaterial color="#fbf7ef" roughness={0.9} />
+          </mesh>
+        </group>
+      ))}
+      {/* ceiling cove — a soft recessed panel rather than a hot spot */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, RH - 0.05, 0]}>
+        <planeGeometry args={[RW * 0.58, RD * 0.58]} />
+        <meshStandardMaterial color="#fffaf1" emissive="#ffeed6" emissiveIntensity={0.34} />
+      </mesh>
+
+      {/* the picture hang */}
+      <Art tx={g1719} pos={[0, 1.68, -RD / 2 + 0.08]} ry={0} w={1.78} />
+      <Art tx={life1} pos={[-RW / 2 + 0.08, 1.68, -1.9]} ry={Math.PI / 2} />
+      <Art tx={life5} pos={[-RW / 2 + 0.08, 1.68, 1.9]} ry={Math.PI / 2} />
+      <Art tx={interior} pos={[RW / 2 - 0.08, 1.68, -1.9]} ry={-Math.PI / 2} />
+      <Art tx={finished} pos={[RW / 2 - 0.08, 1.68, 1.9]} ry={-Math.PI / 2} />
+      <Art tx={aerial} pos={[0, 1.68, RD / 2 - 0.08]} ry={Math.PI} w={1.66} />
+
+      {/* furniture */}
+      <mesh position={[-0.2, 0.34, 2.1]} castShadow><boxGeometry args={[3.1, 0.68, 1.15]} /><meshStandardMaterial color="#ded5c2" roughness={0.95} /></mesh>
+      <mesh position={[-0.2, 0.92, 2.62]} castShadow><boxGeometry args={[3.1, 0.6, 0.26]} /><meshStandardMaterial color="#ded5c2" roughness={0.95} /></mesh>
+      {[-1.4, 1.0].map((x) => (
+        <mesh key={x} position={[x, 0.78, 2.25]}><boxGeometry args={[0.5, 0.5, 0.16]} /><meshStandardMaterial color="#c8bda6" roughness={1} /></mesh>
+      ))}
+      <mesh position={[-0.2, 0.2, 0.7]} castShadow><cylinderGeometry args={[0.62, 0.62, 0.38, 28]} /><meshStandardMaterial color="#123a52" roughness={0.35} metalness={0.15} /></mesh>
+      <mesh position={[-0.2, 0.44, 0.7]}><cylinderGeometry args={[0.16, 0.16, 0.14, 16]} /><meshStandardMaterial color={GOLD} metalness={0.6} roughness={0.3} /></mesh>
+      {/* plant */}
+      <group position={[3.6, 0, -2.6]}>
+        <mesh position={[0, 0.3, 0]}><cylinderGeometry args={[0.34, 0.26, 0.6, 16]} /><meshStandardMaterial color="#cfc4ad" roughness={0.9} /></mesh>
+        <mesh position={[0, 1.05, 0]}><sphereGeometry args={[0.62, 14, 12]} /><meshStandardMaterial color="#2c4f38" roughness={1} /></mesh>
+      </group>
+      {/* floor lamp */}
+      <group position={[-3.7, 0, 2.4]}>
+        <mesh position={[0, 0.05, 0]}><cylinderGeometry args={[0.3, 0.3, 0.08, 16]} /><meshStandardMaterial color="#8d7a5e" roughness={0.6} /></mesh>
+        <mesh position={[0, 0.9, 0]}><cylinderGeometry args={[0.03, 0.03, 1.7, 8]} /><meshStandardMaterial color={GOLD} metalness={0.7} roughness={0.3} /></mesh>
+        <mesh position={[0, 1.85, 0]}><cylinderGeometry args={[0.34, 0.26, 0.42, 18]} /><meshStandardMaterial color="#fdf6e8" emissive="#ffe6bd" emissiveIntensity={0.8} /></mesh>
+        <pointLight color="#ffdcae" intensity={9} distance={7} position={[0, 1.85, 0]} />
+      </group>
+    </group>
+  );
+}
+
+/* ═══════════ THE PAGE ═══════════ */
+
 export function TourPage() {
   const { L, lang } = useLang();
   const [mode, setMode] = useState("building");
-  const [selected, setSelected] = useState(null);
-  const prop = selected ? PROPERTIES[selected] : null;
+  const [unit, setUnit] = useState(null);
+  const [room, setRoom] = useState(null);
+
+  const prop = unit ? PROPERTIES[unit] : null;
+  const theRoom = room ? ROOMS.find((r) => r.id === room) : null;
 
   const tabs = [
     { m: "building", t: { en: "The Building", ar: "المبنى" } },
@@ -380,9 +728,11 @@ export function TourPage() {
   ];
   const hints = {
     building: { en: "Drag to rotate · Scroll to zoom · Click a floor", ar: "اسحب للتدوير · مرر للتقريب · انقر على طابق" },
-    plan: { en: "Drag to rotate · Scroll to zoom", ar: "اسحب للتدوير · مرر للتقريب" },
+    plan: { en: "Drag to rotate · Scroll to zoom · Click a room", ar: "اسحب للتدوير · مرر للتقريب · انقر على غرفة" },
     tour: { en: "Drag to look around", ar: "اسحب لتنظر حولك" },
   };
+
+  const switchTo = (m) => { setMode(m); setUnit(null); setRoom(null); };
 
   return (
     <>
@@ -397,46 +747,72 @@ export function TourPage() {
       <section className="tour-wrap">
         <div className="tour-tabs" role="tablist">
           {tabs.map((t) => (
-            <button key={t.m} className={`tour-tab ${mode === t.m ? "active" : ""}`} onClick={() => { setMode(t.m); setSelected(null); }}>
+            <button key={t.m} className={`tour-tab ${mode === t.m ? "active" : ""}`} onClick={() => switchTo(t.m)}>
               {L(t.t)}
             </button>
           ))}
         </div>
         <div className="tour-stage">
           {mode === "building" && (
-            <Canvas shadows camera={{ position: [16, 10, 20], fov: 45 }} onCreated={({ scene }) => {
+            <Canvas shadows dpr={[1, 2]} camera={{ position: [18, 11, 22], fov: 42 }} onCreated={({ scene }) => {
               scene.background = new THREE.Color("#071e2c");
-              scene.fog = new THREE.Fog("#071e2c", 40, 90);
+              scene.fog = new THREE.Fog("#071e2c", 46, 100);
             }}>
-              <ambientLight color="#8899bb" intensity={0.55} />
-              <directionalLight color="#bfd4ff" intensity={0.55} position={[-14, 22, 10]} castShadow />
-              <pointLight color="#ffd9a0" intensity={60} distance={40} position={[0, 4, 9]} />
-              <Building onPick={setSelected} selected={selected} />
-              <OrbitControls enableDamping autoRotate autoRotateSpeed={0.7} target={[0, 5, 0]} maxPolarAngle={Math.PI / 2.05} />
+              <ambientLight color="#8fa6c4" intensity={0.5} />
+              <hemisphereLight color="#9fc0e0" groundColor="#12303f" intensity={0.55} />
+              <directionalLight color="#cfe0ff" intensity={0.75} position={[-16, 26, 14]} castShadow
+                shadow-mapSize={[1024, 1024]} shadow-camera-left={-24} shadow-camera-right={24}
+                shadow-camera-top={28} shadow-camera-bottom={-8} />
+              <pointLight color="#ffd9a0" intensity={90} distance={44} position={[2, 4, 12]} />
+              <pointLight color="#c99a5b" intensity={60} distance={40} position={[-12, 8, -8]} />
+              <Building onPick={setUnit} selected={unit} />
+              <OrbitControls enableDamping dampingFactor={0.06} autoRotate autoRotateSpeed={0.55}
+                target={[0, 5.4, 0]} maxPolarAngle={Math.PI / 2.06} minDistance={16} maxDistance={44} />
             </Canvas>
           )}
           {mode === "plan" && (
-            <Canvas shadows camera={{ position: [6, 12, 11], fov: 45 }} onCreated={({ scene }) => { scene.background = new THREE.Color("#f3efe7"); }}>
-              <ambientLight intensity={0.95} />
-              <directionalLight intensity={1.1} position={[8, 14, 6]} castShadow />
-              <FloorPlan />
-              <OrbitControls enableDamping maxPolarAngle={Math.PI / 2.2} />
+            <Canvas shadows dpr={[1, 2]} camera={{ position: [6, 12, 11], fov: 45 }} onCreated={({ scene }) => { scene.background = new THREE.Color("#f3efe7"); }}>
+              <ambientLight intensity={0.9} />
+              <hemisphereLight color="#ffffff" groundColor="#d8cfc0" intensity={0.5} />
+              <directionalLight intensity={1.05} position={[8, 14, 6]} castShadow shadow-mapSize={[1024, 1024]} />
+              <FloorPlan onPick={setRoom} selected={room} />
+              <OrbitControls enableDamping maxPolarAngle={Math.PI / 2.2} minDistance={8} maxDistance={26} />
             </Canvas>
           )}
           {mode === "tour" && (
-            <Canvas camera={{ position: [0, 1.55, 0.101], fov: 60 }} onCreated={({ scene }) => { scene.background = new THREE.Color("#f6f2ea"); }}>
-              <ambientLight color="#fff6e8" intensity={0.85} />
-              <pointLight color="#ffe6c0" intensity={45} distance={30} position={[0, 2.6, 0]} />
+            <Canvas dpr={[1, 2]} camera={{ position: [0, 1.62, 0.12], fov: 66 }} onCreated={({ scene }) => { scene.background = new THREE.Color("#f4eee4"); }}>
+              <ambientLight color="#fff6ea" intensity={0.95} />
+              <hemisphereLight color="#ffffff" groundColor="#c19b6d" intensity={0.75} />
+              <pointLight color="#ffe6c0" intensity={22} distance={22} position={[0, 2.45, 0]} />
               <TourRoom />
-              <OrbitControls enableZoom={false} enablePan={false} target={[0, 1.55, 0]} rotateSpeed={-0.4} />
+              {/* level eye-line on the picture hang, with the tilt fenced in so
+                  the visitor can never end up staring at the floor or ceiling */}
+              <OrbitControls enableZoom={false} enablePan={false} target={[0, 1.7, 0]} rotateSpeed={-0.32}
+                enableDamping dampingFactor={0.07} minPolarAngle={Math.PI * 0.38} maxPolarAngle={Math.PI * 0.6} />
             </Canvas>
           )}
           <div className="tour-hint">{L(hints[mode])}</div>
+
           {prop && (
             <div className="tour-panel">
+              <button className="tp-close" onClick={() => setUnit(null)} aria-label="Close">×</button>
+              <p className="tp-eyebrow">{L({ en: "SELECTED FLOOR", ar: "الطابق المحدد" })}</p>
               <h3>{L(prop.title)}</h3>
-              <p>{lang === "ar" ? `${prop.beds} غرف · ${prop.baths} حمامات · ${prop.area}` : `${prop.beds} Beds · ${prop.baths} Baths · ${prop.area}`}</p>
-              <Link className="tp-link" to={`/property/${selected}`}>{L({ en: "View details →", ar: "عرض التفاصيل ←" })}</Link>
+              <p className="tp-specs">{lang === "ar"
+                ? `${prop.beds} غرف · ${prop.baths} حمامات · ${prop.area}`
+                : `${prop.beds} Beds · ${prop.baths} Baths · ${prop.area}`}</p>
+              <ul className="tp-feats">{prop.feats.map((f, i) => <li key={i}>{L(f)}</li>)}</ul>
+              <Link className="tp-link" to={`/property/${unit}`}>{L({ en: "View details →", ar: "عرض التفاصيل ←" })}</Link>
+            </div>
+          )}
+          {theRoom && (
+            <div className="tour-panel">
+              <button className="tp-close" onClick={() => setRoom(null)} aria-label="Close">×</button>
+              <p className="tp-eyebrow">{L({ en: "SELECTED ROOM", ar: "الغرفة المحددة" })}</p>
+              <h3>{L(theRoom.t)}</h3>
+              <p className="tp-specs">{theRoom.area}</p>
+              <p className="tp-copy">{L(theRoom.p)}</p>
+              <Link className="tp-link" to="/booking">{L({ en: "Book a viewing →", ar: "احجز معاينة ←" })}</Link>
             </div>
           )}
         </div>

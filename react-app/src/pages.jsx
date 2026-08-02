@@ -27,6 +27,9 @@ const ICONS = {
   calendar: <><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" /><path d="M16 3v4M8 3v4M3.5 10.5h17" /><path d="M9 14.5h2M9 17.5h6M13 14.5h2" /></>,
   shield: <><path d="M12 3.2 20 6v6c0 4.6-3.3 7.6-8 8.9-4.7-1.3-8-4.3-8-8.9V6l8-2.8Z" /><path d="m9 12 2.2 2.2L15.4 10" /></>,
   compass: <><circle cx="12" cy="12" r="8.8" /><path d="m15.4 8.6-2 5.4-5.4 2 2-5.4 5.4-2Z" /></>,
+  person: <><circle cx="12" cy="8" r="3.6" /><path d="M4.8 20.2a7.2 7.2 0 0 1 14.4 0" /></>,
+  clock: <><circle cx="12" cy="12" r="8.8" /><path d="M12 7.2V12l3.2 2" /></>,
+  pin: <><path d="M19.5 10.2c0 5.4-7.5 11.3-7.5 11.3S4.5 15.6 4.5 10.2a7.5 7.5 0 1 1 15 0Z" /><circle cx="12" cy="10" r="2.8" /></>,
 };
 const ServiceIcon = ({ name }) => (
   <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor"
@@ -163,7 +166,6 @@ export function Home() {
             <a className="btn-ghost" href={SOCIAL.whatsapp} target="_blank" rel="noopener noreferrer">{L({ en: "WHATSAPP US", ar: "راسلنا على واتساب" })}</a>
             <a className="btn-ghost" href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer">{L({ en: "FACEBOOK", ar: "تابعنا على فيسبوك" })}</a>
           </Reveal>
-          <Reveal as="p" className="contact-note">@alshatherwan._ &nbsp;·&nbsp; 07 9048 9291 &nbsp;·&nbsp; {L({ en: "Amman, Jordan", ar: "عمّان، الأردن" })}</Reveal>
         </div>
       </section>
     </>
@@ -510,11 +512,12 @@ export function Booking() {
           </Reveal>
           <Reveal className="binfo-row">
             {[
-              { t: { en: "Private & Personal", ar: "خاصة وشخصية" }, p: { en: "Every viewing is one-on-one with our team — no crowds, no pressure, all your questions answered.", ar: "كل معاينة تتم بشكل فردي مع فريقنا — دون ازدحام أو ضغط، مع إجابة على كل أسئلتك." } },
-              { t: { en: "45 Minutes", ar: "٤٥ دقيقة" }, p: { en: "A full walkthrough of the residence, the building, and the neighbourhood around it.", ar: "جولة كاملة في الشقة والمبنى والحي المحيط به." } },
-              { t: { en: "Amman, Jordan", ar: "عمّان، الأردن" }, p: { en: "We'll send the exact location pin on WhatsApp as soon as your time is confirmed.", ar: "نرسل لك الموقع الدقيق على واتساب فور تأكيد موعدك." } },
-            ].map((b, i) => (
-              <div className="binfo" key={i}>
+              { icon: "person", t: { en: "Private & Personal", ar: "خاصة وشخصية" }, p: { en: "One-on-one with our team.", ar: "جولة فردية مع فريقنا." } },
+              { icon: "clock", t: { en: "45 Minutes", ar: "٤٥ دقيقة" }, p: { en: "Apartment, building, neighbourhood.", ar: "الشقة والمبنى والحي." } },
+              { icon: "pin", t: { en: "Amman, Jordan", ar: "عمّان، الأردن" }, p: { en: "Exact pin sent on WhatsApp.", ar: "الموقع الدقيق عبر واتساب." } },
+            ].map((b) => (
+              <div className="binfo" key={b.icon}>
+                <span className="binfo-icon"><ServiceIcon name={b.icon} /></span>
                 <h3>{langText(b.t)}</h3>
                 <p>{langText(b.p)}</p>
               </div>

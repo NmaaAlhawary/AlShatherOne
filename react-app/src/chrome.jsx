@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLang } from "./lang.jsx";
-import { SOCIAL, SEARCH_INDEX, wa, asset } from "./data.js";
+import { SOCIAL, SEARCH_INDEX, LOCATION, wa, mailto, asset } from "./data.js";
 
 /* reveal-on-scroll wrapper: same .reveal/.visible classes as the CSS.
    `delay` (ms) staggers siblings; motion is skipped entirely for visitors
@@ -81,12 +81,18 @@ export function Nav({ onSearch }) {
 }
 
 export function Footer() {
-  const { L } = useLang();
+  const { L, lang } = useLang();
   const [done, setDone] = useState(false);
   const submit = (e) => {
     e.preventDefault();
     const email = e.target.email.value.trim();
-    window.open(wa(`مرحباً! أرغب بالانضمام إلى قائمة الشاذروان البريدية.\nNewsletter signup: ${email}`), "_blank");
+    if (!email) return;
+    const subject = lang === "ar" ? "الانضمام إلى القائمة البريدية" : "Newsletter signup";
+    const body = lang === "ar"
+      ? `مرحباً شركة الشاذروان للإسكان،\n\nأرغب بالانضمام إلى قائمتكم البريدية.\nبريدي الإلكتروني: ${email}\n`
+      : `Hello Al Shatherwan for Housing,\n\nI would like to join your mailing list.\nMy email: ${email}\n`;
+    // Static site, no backend — this hands the message to the visitor's mail client.
+    window.location.href = mailto(subject, body);
     setDone(true);
     e.target.reset();
   };
@@ -97,10 +103,15 @@ export function Footer() {
           <h3 className="footer-news-title">{L({ en: "Join Our List", ar: "انضم إلى قائمتنا" })}</h3>
           <p className="footer-news-sub">{L({ en: "Be the first to hear about new residences and private viewings.", ar: "كن أول من يعرف عن مشاريعنا الجديدة ومواعيد المعاينات الخاصة." })}</p>
           <form className="news-form" onSubmit={submit}>
-            <input type="email" name="email" placeholder={L({ en: "Email address", ar: "البريد الإلكتروني" })} required />
+            {/* clearing `done` on edit stops a stale confirmation sitting under an empty field */}
+            <input
+              type="email" name="email" required
+              placeholder={L({ en: "Email address", ar: "البريد الإلكتروني" })}
+              onChange={() => done && setDone(false)}
+            />
             <button type="submit">{L({ en: "SUBSCRIBE", ar: "اشترك" })}</button>
           </form>
-          {done && <p className="news-done">{L({ en: "✓ Thank you — we'll be in touch.", ar: "✓ شكراً لك — سنتواصل معك قريباً." })}</p>}
+          {done && <p className="news-done">{L({ en: "✓ Your email is ready to send — just press send.", ar: "✓ رسالتك جاهزة — اضغط إرسال فقط." })}</p>}
         </div>
         <div className="footer-cols">
           <div className="fcol">
@@ -157,15 +168,21 @@ export function ChatWidget() {
   const answer = (raw) => {
     const t = raw.toLowerCase();
     const ar = /[؀-ۿ]/.test(raw);
-    const A = (en, arr, action) => ({ who: "bot", text: ar ? arr : en, action });
+    const A = (en, arr, ...actions) => ({ who: "bot", text: ar ? arr : en, actions: actions.filter(Boolean) });
     if (/(book|viewing|visit|appointment|حجز|معاينة|موعد|زيارة)/.test(t))
       return A("With pleasure! You can reserve a private viewing on our booking page.", "بكل سرور! يمكنك حجز موعد المعاينة من صفحة الحجز.", { label: ar ? "احجز الآن" : "Book now", to: "/booking" });
     if (/(price|cost|كم|سعر|أسعار)/.test(t))
       return A("Prices vary by project, floor, and apartment size. Message us directly and we'll send the current price list.", "الأسعار تختلف حسب المشروع والمساحة والطابق. راسلنا وسنرسل لك قائمة الأسعار.", { label: "WhatsApp", href: SOCIAL.whatsapp });
     if (/(available|homes|apartment|شقق|متوفر|مشاريع)/.test(t))
       return A("Currently featuring Residence 1719 — spacious apartments in a prime Amman district.", "حالياً: مشروع الشاذروان ١٧١٩ — شقق واسعة في موقع مميز بعمّان.", { label: ar ? "شاهد المشروع" : "See the residence", to: "/projects" });
-    if (/(where|location|address|أين|موقع|عنوان)/.test(t))
-      return A("Our projects are in Amman's most desirable districts. Tell us which area you prefer!", "مشاريعنا في أرقى مناطق عمّان — أخبرنا بالمنطقة التي تفضلها!");
+    if (/(where|location|address|directions|map|أين|موقع|عنوان|خريطة)/.test(t))
+      return A(
+        `We build in ${LOCATION.city.en}. Our current project, ${LOCATION.project.en}, is in one of the city's most desirable districts — walking distance to schools, shops, and daily essentials.\nWe send the exact location pin on WhatsApp once a viewing is booked, so you arrive at the door, not the street.`,
+        `نبني في ${LOCATION.city.ar}. مشروعنا الحالي، ${LOCATION.project.ar}، في واحدة من أرقى مناطق المدينة — على مسافة قريبة من المدارس والمحال والخدمات اليومية.\nنرسل الموقع الدقيق عبر واتساب فور حجز المعاينة، لتصل إلى الباب مباشرة.`,
+        { label: ar ? "افتح الخريطة" : "Open in Maps", href: LOCATION.maps },
+        { label: ar ? "أرسل لي الموقع" : "Send me the pin", href: SOCIAL.whatsapp },
+        { label: ar ? "احجز معاينة" : "Book a viewing", to: "/booking" },
+      );
     if (/(contact|phone|whatsapp|تواصل|هاتف|واتس)/.test(t))
       return A("Message us on WhatsApp, or follow @alshatherwan._ on Instagram.", "راسلنا على واتساب أو تابعنا على إنستغرام @alshatherwan._", { label: "WhatsApp", href: SOCIAL.whatsapp });
     if (/(hello|hi|مرحبا|السلام|اهلا|أهلا)/.test(t))
@@ -204,9 +221,13 @@ export function ChatWidget() {
             {msgs.map((m, i) => (
               <div key={i} className={`chat-msg ${m.who}`}>
                 {m.text}
-                {m.action && (m.action.to
-                  ? <><br /><Link to={m.action.to} onClick={() => setOpen(false)}>{m.action.label} →</Link></>
-                  : <><br /><a href={m.action.href} target="_blank" rel="noopener noreferrer">{m.action.label} →</a></>)}
+                {m.actions?.length > 0 && (
+                  <span className="chat-actions">
+                    {m.actions.map((a) => a.to
+                      ? <Link key={a.label} to={a.to} onClick={() => setOpen(false)}>{a.label} →</Link>
+                      : <a key={a.label} href={a.href} target="_blank" rel="noopener noreferrer">{a.label} →</a>)}
+                  </span>
+                )}
               </div>
             ))}
           </div>
