@@ -770,7 +770,9 @@ html[lang="ar"] .lang-toggle { font-family: var(--sans); font-size: 0.7rem; lett
   position: relative;
   min-height: 400px;
   display: flex; align-items: center; justify-content: center;
-  background: url("assets/life-4.jpg") center 40% / cover no-repeat;
+  /* Leading slash matters: Vite rewrites root-relative public URLs with the
+     configured base. Without it this resolved to assets/assets/life-4.jpg. */
+  background: url("/assets/life-4.jpg") center 40% / cover no-repeat;
 }
 .book-cta::before {
   content: "";

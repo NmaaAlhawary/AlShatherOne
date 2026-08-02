@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLang } from "./lang.jsx";
-import { SOCIAL, SEARCH_INDEX, wa } from "./data.js";
+import { SOCIAL, SEARCH_INDEX, wa, asset } from "./data.js";
 
 /* reveal-on-scroll wrapper: same .reveal/.visible classes as the CSS.
    `delay` (ms) staggers siblings; motion is skipped entirely for visitors
@@ -193,7 +193,7 @@ export function ChatWidget() {
       {open && (
         <div className="chat-panel">
           <div className="chat-header">
-            <img src="/assets/logo.jpg" alt="" />
+            <img src={asset("/assets/logo.jpg")} alt="" />
             <div>
               <p className="chat-title">{L({ en: "Shatherwan Concierge", ar: "مساعد الشاذروان" })}</p>
               <p className="chat-status"><span className="chat-dot"></span>{L({ en: "Online", ar: "في خدمتك" })}</p>

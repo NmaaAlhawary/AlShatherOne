@@ -7,7 +7,8 @@ import "./site.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/* basename keeps routing correct when Pages serves from /AlShatherOne/ */}
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <LangProvider>
         <App />
       </LangProvider>

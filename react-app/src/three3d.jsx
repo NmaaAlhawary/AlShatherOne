@@ -4,7 +4,7 @@ import { OrbitControls, Text } from "@react-three/drei";
 import * as THREE from "three";
 import { Link } from "react-router-dom";
 import { useLang } from "./lang.jsx";
-import { GALLERY_IMAGES, PROPERTIES } from "./data.js";
+import { GALLERY_IMAGES, PROPERTIES, asset } from "./data.js";
 
 const GOLD = "#c99a5b";
 
@@ -281,7 +281,7 @@ function Building({ onPick, selected }) {
 }
 
 function FloorPlan() {
-  const planTex = useLoader(THREE.TextureLoader, "/assets/plan-tex.jpg");
+  const planTex = useLoader(THREE.TextureLoader, asset("/assets/plan-tex.jpg"));
   planTex.colorSpace = THREE.SRGBColorSpace;
   const PW = 14, PD = 14 * (590 / 850), T = 0.18;
   const walls = [
@@ -328,7 +328,7 @@ function FloorPlan() {
 
 function TourRoom() {
   const [aerial, life1, life5, g1719, finished] = useLoader(THREE.TextureLoader, [
-    "/assets/ig-aerial.jpg", "/assets/life-1.jpg", "/assets/life-5.jpg", "/assets/gallery-1719.jpg", "/assets/ig-finished.jpg",
+    asset("/assets/ig-aerial.jpg"), asset("/assets/life-1.jpg"), asset("/assets/life-5.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/ig-finished.jpg"),
   ]);
   [aerial, life1, life5, g1719, finished].forEach((t) => (t.colorSpace = THREE.SRGBColorSpace));
   const RW = 9, RD = 9, RH = 3.2;

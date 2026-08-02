@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useLang } from "./lang.jsx";
 import { Reveal } from "./chrome.jsx";
-import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, SERVICES, SOCIAL, wa } from "./data.js";
+import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, SERVICES, SOCIAL, wa, asset } from "./data.js";
 import { GalleryRing, ScrollHero } from "./three3d.jsx";
 
 const PageHero = ({ eyebrow, title }) => {
@@ -91,7 +91,7 @@ export function Home() {
     <>
       <header className="hero" id="hero">
         <div className="hero-bg" ref={heroRef}>
-          <img src="/assets/hero-clean.jpg" alt="Al Shatherwan residence at night" />
+          <img src={asset("/assets/hero-clean.jpg")} alt="Al Shatherwan residence at night" />
         </div>
         <div className="hero-veil"></div>
         <div className="hero-content">
@@ -196,7 +196,7 @@ export function About() {
         <div className="chapter-inner wide">
           <div className="house-split">
             <Reveal className="house-media">
-              <div className="house-frame"><img src="/assets/building-1719.jpg" alt="Al Shatherwan residence" /></div>
+              <div className="house-frame"><img src={asset("/assets/building-1719.jpg")} alt="Al Shatherwan residence" /></div>
             </Reveal>
             <div className="house-copy">
               <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</Reveal>
@@ -275,11 +275,11 @@ export function About() {
           <Reveal as="p" className="craft-lead" delay={180}>{L({ en: "Every Shatherwan home is built to be lived in for generations — quality you can see, and quality you can feel.", ar: "كل منزل من الشاذروان يُبنى ليُسكن لأجيال — جودة تراها بعينك، وجودة تلمسها بإحساسك." })}</Reveal>
           <div className="craft-grid">
             <Reveal as="figure" className="craft-item">
-              <div className="craft-img"><img src="/assets/detail-balconies.jpg" alt="Balcony detail" /></div>
+              <div className="craft-img"><img src={asset("/assets/detail-balconies.jpg")} alt="Balcony detail" /></div>
               <figcaption>{L({ en: "The Balconies", ar: "الشرفات" })}</figcaption>
             </Reveal>
             <Reveal as="figure" className="craft-item" delay={160}>
-              <div className="craft-img"><img src="/assets/detail-entrance.jpg" alt="Entrance colonnade" /></div>
+              <div className="craft-img"><img src={asset("/assets/detail-entrance.jpg")} alt="Entrance colonnade" /></div>
               <figcaption>{L({ en: "The Entrance", ar: "المدخل" })}</figcaption>
             </Reveal>
           </div>
@@ -342,7 +342,7 @@ export function Projects() {
       <PageHero eyebrow={{ en: "OUR WORK", ar: "أعمالنا" }} title={{ en: "The Projects", ar: "المشاريع" }} />
       <section className="chapter chapter-residence" id="residence">
         <div className="residence-hero">
-          <div className="residence-img"><img src="/assets/building-1719.jpg" alt="Residence 1719 by night" /></div>
+          <div className="residence-img"><img src={asset("/assets/building-1719.jpg")} alt="Residence 1719 by night" /></div>
           <div className="residence-veil"></div>
           <div className="residence-caption">
             <p className="chapter-num light-num reveal visible">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</p>

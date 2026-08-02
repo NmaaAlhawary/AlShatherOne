@@ -1,3 +1,8 @@
+// Vite's base path — "/" in dev, "/AlShatherOne/" on GitHub Pages.
+// Every reference to a file in public/ must go through this, or it breaks
+// the moment the site is served from a subpath.
+export const asset = (p) => `${import.meta.env.BASE_URL}${p.replace(/^\//, "")}`;
+
 export const WHATSAPP = "962790489291"; // from the company's Facebook page
 export const wa = (msg) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`;
 
@@ -8,7 +13,7 @@ export const mailto = (subject, body) =>
 
 export const PROPERTIES = {
   garden: {
-    imgs: ["/assets/gallery-1719.jpg", "/assets/detail-entrance.jpg", "/assets/life-1.jpg", "/assets/ig-interior.jpg"],
+    imgs: [asset("/assets/gallery-1719.jpg"), asset("/assets/detail-entrance.jpg"), asset("/assets/life-1.jpg"), asset("/assets/ig-interior.jpg")],
     title: { en: "Garden Apartment — Ground Floor", ar: "شقة أرضية مع حديقة" },
     beds: 4, baths: 4, area: "235 m²",
     floor: { en: "Ground", ar: "أرضي" },
@@ -23,7 +28,7 @@ export const PROPERTIES = {
     ],
   },
   first: {
-    imgs: ["/assets/detail-balconies.jpg", "/assets/gallery-1719.jpg", "/assets/life-2.jpg", "/assets/ig-interior.jpg"],
+    imgs: [asset("/assets/detail-balconies.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-2.jpg"), asset("/assets/ig-interior.jpg")],
     title: { en: "First-Floor Apartment", ar: "شقة الطابق الأول" },
     beds: 3, baths: 3, area: "185 m²",
     floor: { en: "First", ar: "الأول" },
@@ -38,7 +43,7 @@ export const PROPERTIES = {
     ],
   },
   second: {
-    imgs: ["/assets/ig-interior.jpg", "/assets/gallery-1719.jpg", "/assets/life-3.jpg", "/assets/detail-balconies.jpg"],
+    imgs: [asset("/assets/ig-interior.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-3.jpg"), asset("/assets/detail-balconies.jpg")],
     title: { en: "Second-Floor Apartment", ar: "شقة الطابق الثاني" },
     beds: 3, baths: 3, area: "185 m²",
     floor: { en: "Second", ar: "الثاني" },
@@ -53,7 +58,7 @@ export const PROPERTIES = {
     ],
   },
   roof: {
-    imgs: ["/assets/detail-entrance.jpg", "/assets/gallery-1719.jpg", "/assets/life-4.jpg", "/assets/ig-finished.jpg"],
+    imgs: [asset("/assets/detail-entrance.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-4.jpg"), asset("/assets/ig-finished.jpg")],
     title: { en: "Rooftop Apartment & Terrace", ar: "شقة الروف مع تراس" },
     beds: 4, baths: 4, area: "210 m²",
     floor: { en: "Rooftop", ar: "الروف" },
@@ -79,37 +84,37 @@ export const COMMON_FEATS = [
 ];
 
 export const LISTINGS = [
-  { id: "garden", img: "/assets/gallery-1719.jpg", specs: { en: "4 Beds · 4 Baths · 235 m²", ar: "٤ غرف نوم · ٤ حمامات · ٢٣٥ م²" } },
-  { id: "first", img: "/assets/detail-balconies.jpg", specs: { en: "3 Beds · 3 Baths · 185 m²", ar: "٣ غرف نوم · ٣ حمامات · ١٨٥ م²" } },
-  { id: "second", img: "/assets/ig-interior.jpg", specs: { en: "3 Beds · 3 Baths · 185 m²", ar: "٣ غرف نوم · ٣ حمامات · ١٨٥ م²" } },
-  { id: "roof", img: "/assets/detail-entrance.jpg", specs: { en: "4 Beds · 4 Baths · 210 m²", ar: "٤ غرف نوم · ٤ حمامات · ٢١٠ م²" } },
+  { id: "garden", img: asset("/assets/gallery-1719.jpg"), specs: { en: "4 Beds · 4 Baths · 235 m²", ar: "٤ غرف نوم · ٤ حمامات · ٢٣٥ م²" } },
+  { id: "first", img: asset("/assets/detail-balconies.jpg"), specs: { en: "3 Beds · 3 Baths · 185 m²", ar: "٣ غرف نوم · ٣ حمامات · ١٨٥ م²" } },
+  { id: "second", img: asset("/assets/ig-interior.jpg"), specs: { en: "3 Beds · 3 Baths · 185 m²", ar: "٣ غرف نوم · ٣ حمامات · ١٨٥ م²" } },
+  { id: "roof", img: asset("/assets/detail-entrance.jpg"), specs: { en: "4 Beds · 4 Baths · 210 m²", ar: "٤ غرف نوم · ٤ حمامات · ٢١٠ م²" } },
 ];
 
 export const GALLERY_IMAGES = [
-  { src: "/assets/gallery-1719.jpg", caption: { en: "Residence 1719", ar: "مشروع ١٧١٩" } },
-  { src: "/assets/ig-finished.jpg", caption: { en: "Delivered Home", ar: "منزل مُسلَّم" } },
-  { src: "/assets/ig-interior.jpg", caption: { en: "Light-Filled Interiors", ar: "مساحات مضيئة" } },
-  { src: "/assets/ig-aerial.jpg", caption: { en: "Prime Districts", ar: "أرقى المناطق" } },
-  { src: "/assets/detail-balconies.jpg", caption: { en: "The Balconies", ar: "الشرفات" } },
-  { src: "/assets/ig-construction.jpg", caption: { en: "Built From the Ground Up", ar: "من الأساس إلى القمة" } },
-  { src: "/assets/ig-street.jpg", caption: { en: "Amman, Jordan", ar: "عمّان، الأردن" } },
-  { src: "/assets/ig-keys.jpg", caption: { en: "Every Home, a New Beginning", ar: "كل منزل بداية جديدة" } },
+  { src: asset("/assets/gallery-1719.jpg"), caption: { en: "Residence 1719", ar: "مشروع ١٧١٩" } },
+  { src: asset("/assets/ig-finished.jpg"), caption: { en: "Delivered Home", ar: "منزل مُسلَّم" } },
+  { src: asset("/assets/ig-interior.jpg"), caption: { en: "Light-Filled Interiors", ar: "مساحات مضيئة" } },
+  { src: asset("/assets/ig-aerial.jpg"), caption: { en: "Prime Districts", ar: "أرقى المناطق" } },
+  { src: asset("/assets/detail-balconies.jpg"), caption: { en: "The Balconies", ar: "الشرفات" } },
+  { src: asset("/assets/ig-construction.jpg"), caption: { en: "Built From the Ground Up", ar: "من الأساس إلى القمة" } },
+  { src: asset("/assets/ig-street.jpg"), caption: { en: "Amman, Jordan", ar: "عمّان، الأردن" } },
+  { src: asset("/assets/ig-keys.jpg"), caption: { en: "Every Home, a New Beginning", ar: "كل منزل بداية جديدة" } },
 ];
 
 export const LIFE_IMAGES = [
-  { src: "/assets/life-1.jpg", cap: { en: "The Living Room", ar: "غرفة المعيشة" } },
-  { src: "/assets/life-2.jpg", cap: { en: "Soft Curves", ar: "انحناءات ناعمة" } },
-  { src: "/assets/life-3.jpg", cap: { en: "Golden Hour", ar: "الساعة الذهبية" } },
-  { src: "/assets/life-4.jpg", cap: { en: "The Hearth", ar: "المدفأة" } },
-  { src: "/assets/life-5.jpg", cap: { en: "Editorial Calm", ar: "هدوء أنيق" } },
-  { src: "/assets/life-6.jpg", cap: { en: "Quiet Details", ar: "تفاصيل هادئة" } },
+  { src: asset("/assets/life-1.jpg"), cap: { en: "The Living Room", ar: "غرفة المعيشة" } },
+  { src: asset("/assets/life-2.jpg"), cap: { en: "Soft Curves", ar: "انحناءات ناعمة" } },
+  { src: asset("/assets/life-3.jpg"), cap: { en: "Golden Hour", ar: "الساعة الذهبية" } },
+  { src: asset("/assets/life-4.jpg"), cap: { en: "The Hearth", ar: "المدفأة" } },
+  { src: asset("/assets/life-5.jpg"), cap: { en: "Editorial Calm", ar: "هدوء أنيق" } },
+  { src: asset("/assets/life-6.jpg"), cap: { en: "Quiet Details", ar: "تفاصيل هادئة" } },
 ];
 
 export const PROCESS = [
-  { img: "/assets/ig-aerial.jpg", n: "01", t: { en: "The Land", ar: "الأرض" }, p: { en: "We choose prime, well-connected districts and study every plot before a single stone is laid.", ar: "نختار أرقى المناطق وأكثرها حيوية، وندرس كل قطعة أرض قبل وضع أول حجر." } },
-  { img: "/assets/ig-construction.jpg", n: "02", t: { en: "The Structure", ar: "الهيكل" }, p: { en: "Reinforced concrete and natural stone, engineered and inspected to last for generations.", ar: "خرسانة مسلحة وحجر طبيعي، بهندسة وإشراف يدومان لأجيال." } },
-  { img: "/assets/ig-interior.jpg", n: "03", t: { en: "The Finishing", ar: "التشطيب" }, p: { en: "Light-filled interiors completed with premium materials and painstaking detail.", ar: "مساحات مضيئة تُنجز بمواد فاخرة وعناية بأدق التفاصيل." } },
-  { img: "/assets/ig-finished.jpg", n: "04", t: { en: "The Delivery", ar: "التسليم" }, p: { en: "A completed home, handed over ready for life — on time and exactly as promised.", ar: "منزل مكتمل يُسلَّم جاهزاً للحياة — في موعده وكما وعدنا تماماً." } },
+  { img: asset("/assets/ig-aerial.jpg"), n: "01", t: { en: "The Land", ar: "الأرض" }, p: { en: "We choose prime, well-connected districts and study every plot before a single stone is laid.", ar: "نختار أرقى المناطق وأكثرها حيوية، وندرس كل قطعة أرض قبل وضع أول حجر." } },
+  { img: asset("/assets/ig-construction.jpg"), n: "02", t: { en: "The Structure", ar: "الهيكل" }, p: { en: "Reinforced concrete and natural stone, engineered and inspected to last for generations.", ar: "خرسانة مسلحة وحجر طبيعي، بهندسة وإشراف يدومان لأجيال." } },
+  { img: asset("/assets/ig-interior.jpg"), n: "03", t: { en: "The Finishing", ar: "التشطيب" }, p: { en: "Light-filled interiors completed with premium materials and painstaking detail.", ar: "مساحات مضيئة تُنجز بمواد فاخرة وعناية بأدق التفاصيل." } },
+  { img: asset("/assets/ig-finished.jpg"), n: "04", t: { en: "The Delivery", ar: "التسليم" }, p: { en: "A completed home, handed over ready for life — on time and exactly as promised.", ar: "منزل مكتمل يُسلَّم جاهزاً للحياة — في موعده وكما وعدنا تماماً." } },
 ];
 
 export const FEATURES = [
