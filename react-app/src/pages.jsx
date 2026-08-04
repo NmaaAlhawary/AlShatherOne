@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useLang } from "./lang.jsx";
 import { Reveal } from "./chrome.jsx";
-import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, wa, asset } from "./data.js";
+import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, SOCIAL, wa, asset } from "./data.js";
 import { GalleryRing } from "./three3d.jsx";
 
 const PageHero = ({ eyebrow, title }) => {
@@ -40,9 +40,9 @@ const ServiceIcon = ({ name }) => (
 );
 
 /* ═══════════ HERO — scroll-scrubbed build sequence ═══════════
-   240 JPEGs blended from the raw-concrete and finished passes, so scrolling
-   walks the building from shell to finish. Mirrors the vanilla implementation
-   in ../../script.js — keep the two in step. */
+   240 WebP frames at 1080p, so scrolling walks the building from bare
+   footings to the finished residence opening apart. Mirrors the vanilla
+   implementation in ../../script.js — keep the two in step. */
 const BUILD_FRAMES = 240;
 const buildFrame = (i) => asset(`/assets/buildseq/frame_${String(i + 1).padStart(4, "0")}.webp`);
 
@@ -292,6 +292,17 @@ export function Home() {
           <Reveal as="h2" className="chapter-title on-blue">{L({ en: "Begin Your Story", ar: "ابدأ قصتك" })}</Reveal>
           <Reveal className="chapter-rule gold"></Reveal>
           <Reveal as="p" className="contact-lead">{L({ en: "Your ideal home in Amman is waiting. Reach out and let us walk you through it.", ar: "منزلك المثالي في عمّان بانتظارك. تواصل معنا ودعنا نرافقك في الجولة." })}</Reveal>
+          <Reveal className="contact-actions">
+            <a className="cbtn cbtn-primary" href={SOCIAL.whatsapp} target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M20.5 11.9a8.5 8.5 0 0 1-12.4 7.5L4 20.5l1.1-4a8.5 8.5 0 1 1 15.4-4.6z" /><path d="M9.2 9.4c.5 2.6 2.6 4.7 5.2 5.2l1.2-1.2 2.1 1.1-.5 1.5c-4 .4-8.7-3.6-9-8.1l1.5-.5 1.1 2z" fill="currentColor" stroke="none" /></svg>
+              {L({ en: "WhatsApp Us", ar: "راسلنا على واتساب" })}
+            </a>
+            <a className="cbtn" href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5.5" /><circle cx="12" cy="12" r="4.2" /><circle cx="17.2" cy="6.8" r="1.15" fill="currentColor" stroke="none" /></svg>
+              {L({ en: "Instagram", ar: "تابعنا على إنستغرام" })}
+            </a>
+          </Reveal>
+          <Reveal as="p" className="contact-note">@alshatherwan._ &nbsp;·&nbsp; 07 9048 9291 &nbsp;·&nbsp; {L({ en: "Amman, Jordan", ar: "عمّان، الأردن" })}</Reveal>
         </div>
       </section>
     </>
@@ -532,7 +543,6 @@ export function Projects() {
               );
             })}
           </div>
-          <Reveal as="p" className="listings-note">{L({ en: "* Sample availability — contact us for the current list and prices.", ar: "* نماذج توضيحية — تواصل معنا لقائمة الشقق والأسعار الحالية." })}</Reveal>
         </div>
       </section>
     </>

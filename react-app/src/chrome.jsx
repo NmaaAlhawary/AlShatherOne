@@ -100,7 +100,7 @@ export function Footer() {
     <footer className="footer">
       <div className="footer-top">
         <div className="footer-news">
-          <h3 className="footer-news-title">{L({ en: "Join Our List", ar: "انضم إلى قائمتنا" })}</h3>
+          <h3 className="footer-news-title">{L({ en: "Stay in Touch", ar: "ابقَ على تواصل" })}</h3>
           <p className="footer-news-sub">{L({ en: "Be the first to hear about new residences and private viewings.", ar: "كن أول من يعرف عن مشاريعنا الجديدة ومواعيد المعاينات الخاصة." })}</p>
           <form className="news-form" onSubmit={submit}>
             {/* clearing `done` on edit stops a stale confirmation sitting under an empty field */}
