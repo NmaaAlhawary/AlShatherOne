@@ -105,23 +105,49 @@ img { display: block; max-width: 100%; }
 .nav-cta:hover { background: rgba(224, 189, 143, 0.12); }
 .nav-toggle { display: none; }
 
-/* ═══════════════ HERO ═══════════════ */
+/* ═══════════════ HERO — scroll-driven rotation ═══════════════ */
+.hero-track { position: relative; height: 560vh; background: #121417; }
 .hero {
-  position: relative; height: 100svh; min-height: 600px;
+  position: sticky; top: 0; height: 100svh; min-height: 600px;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
-  background: var(--navy-night);
+  background: #121417;
 }
-.hero-bg { position: absolute; inset: -12% 0; z-index: 0; }
-.hero-bg img {
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+.hero-bg img,
+.hero-bg canvas {
+  position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
-  filter: brightness(0.85) saturate(1.05);
 }
+.hero-bg canvas { opacity: 0; transition: opacity 0.5s ease; }
+.hero-bg.frames-ready canvas { opacity: 1; }
 .hero-veil {
-  position: absolute; inset: 0; z-index: 1;
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
-    linear-gradient(to bottom, rgba(7,30,44,0.75) 0%, rgba(7,30,44,0.25) 35%, rgba(7,30,44,0.25) 60%, rgba(7,30,44,0.88) 100%),
-    radial-gradient(ellipse at center, transparent 40%, rgba(7,30,44,0.45) 100%);
+    linear-gradient(to bottom, rgba(10,13,16,0.62) 0%, rgba(10,13,16,0.08) 32%, rgba(10,13,16,0.08) 62%, rgba(10,13,16,0.8) 100%),
+    radial-gradient(ellipse at center, transparent 45%, rgba(10,13,16,0.4) 100%);
+}
+.hero-stage {
+  position: absolute; z-index: 2;
+  left: clamp(1.5rem, 7vw, 7rem); bottom: 22%;
+  max-width: 340px;
+  opacity: 0; transform: translateY(26px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  pointer-events: none;
+}
+.hero-stage.right { left: auto; right: clamp(1.5rem, 7vw, 7rem); text-align: right; }
+.hero-stage.on { opacity: 1; transform: translateY(0); }
+.stage-eyebrow {
+  font-family: var(--sans); font-weight: 300;
+  font-size: 0.66rem; letter-spacing: 0.4em;
+  color: var(--gold-soft);
+  margin-bottom: 0.9rem;
+}
+.stage-title {
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem); line-height: 1.35;
+  color: var(--cream);
+  text-shadow: 0 3px 26px rgba(0,0,0,0.5);
 }
 .hero-content { position: relative; z-index: 2; text-align: center; padding: 0 1.5rem; }
 .hero-eyebrow {
@@ -196,6 +222,20 @@ img { display: block; max-width: 100%; }
   opacity: 0.35;
 }
 .chapter-rule.gold { background: var(--gold-soft); opacity: 0.7; }
+.chapter-ornament {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.2rem;
+  margin: 1.7rem auto 2.7rem;
+  color: var(--gold); font-size: 0.72rem;
+}
+.chapter-ornament::before,
+.chapter-ornament::after {
+  content: ""; width: 72px; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201,154,91,0.6));
+}
+.chapter-ornament::after {
+  background: linear-gradient(to left, transparent, rgba(201,154,91,0.6));
+}
 
 /* Geometric pattern backdrop */
 .pattern-bg {
@@ -638,7 +678,6 @@ img { display: block; max-width: 100%; }
   color: rgba(253,252,249,0.92);
   max-width: 24em; margin: 0 auto 3rem;
 }
-.contact-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.1rem; }
 .btn-solid, .btn-ghost {
   font-family: var(--sans); font-weight: 400;
   font-size: 0.72rem; letter-spacing: 0.28em;
@@ -722,6 +761,9 @@ img { display: block; max-width: 100%; }
   .vm-grid, .residence-features, .craft-grid { grid-template-columns: 1fr; }
   .story-stats { flex-direction: column; gap: 2.4rem; }
   .stat-divider { display: none; }
+  .hero-track { height: 440vh; }
+  .hero-stage { bottom: 16%; max-width: 260px; }
+  .stage-title { font-size: 1.15rem; }
 }
 
 /* ═══════════════ LANG TOGGLE ═══════════════ */
@@ -1177,6 +1219,15 @@ html[dir="rtl"] .nav-side a { font-family: var(--arabic); font-size: 0.95rem; te
   margin: 1.1rem auto 1rem;
 }
 .stat-divider { align-self: stretch; }
+.story-lead em { font-style: italic; color: var(--gold); }
+.story-stats {
+  border-top: 1px solid rgba(18,58,82,0.1);
+  border-bottom: 1px solid rgba(18,58,82,0.1);
+  padding: 2.7rem clamp(1rem, 4vw, 3rem);
+  max-width: 880px;
+  margin-left: auto; margin-right: auto;
+}
+.stat-label { letter-spacing: 0.34em; text-indent: 0.34em; }
 
 /* ── English mode: hide Arabic accent text ── */
 html[lang="en"] .ar { display: none; }
@@ -1223,9 +1274,8 @@ html[lang="en"] .ar-only { display: none; }
 }
 .craft-values .dot { color: var(--gold); font-size: 1.1rem; }
 
-/* ── Hero: full building visible, zooms while scrolling ── */
-.hero-bg { inset: 0; will-change: transform; transform-origin: center 40%; }
-.hero-bg img { object-position: center 30%; }
+/* ── Hero: rotation frames keep the building centered ── */
+.hero-bg img { object-position: center 42%; }
 
 /* ── Residence features: readable cards ── */
 .residence-features {
@@ -1909,4 +1959,257 @@ html[dir="rtl"] .listing-view:hover svg { transform: scaleX(-1) translateX(3px);
   .residence-features { grid-template-columns: 1fr; gap: 2rem; }
   .feature { border-inline-start: none; border-top: 1px solid rgba(18,58,82,0.15); padding-top: 2rem; }
   .feature:first-child { border-top: none; padding-top: 0; }
+}
+
+/* ═══════════════ BOOKING CONFIRMATION MODAL ═══════════════ */
+.modal-overlay[hidden] { display: none; }
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 95;
+  background: rgba(7, 30, 44, 0.55);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  animation: chatIn 0.3s ease;
+}
+.booking-modal {
+  position: relative;
+  width: min(460px, 100%);
+  background: var(--cream);
+  padding: clamp(2.4rem, 5vw, 3.2rem) clamp(1.8rem, 4vw, 2.8rem);
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(7, 30, 44, 0.45);
+}
+.bm-x {
+  position: absolute; top: 0.7rem; right: 1.1rem;
+  background: none; border: none; cursor: pointer;
+  font-size: 1.9rem; line-height: 1;
+  color: rgba(16, 34, 46, 0.45);
+  transition: color 0.25s ease;
+}
+.bm-x:hover { color: var(--navy); }
+html[dir="rtl"] .bm-x { right: auto; left: 1.1rem; }
+.bm-check {
+  width: 62px; height: 62px;
+  margin: 0 auto 1.3rem;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 1.5rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.booking-modal h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3vw, 1.7rem);
+  color: var(--navy);
+  margin-bottom: 0.8rem;
+}
+html[lang="ar"] .booking-modal h3 { font-family: var(--arabic); }
+.bm-text {
+  font-family: var(--serif2);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: rgba(16, 34, 46, 0.7);
+  margin-bottom: 1.2rem;
+}
+html[lang="ar"] .bm-text { font-family: var(--arabic); }
+.bm-summary {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+  border-block: 1px solid rgba(18, 58, 82, 0.15);
+  padding: 0.9rem 0;
+  margin-bottom: 1.6rem;
+}
+.bm-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+.bm-whatsapp {
+  font-family: var(--sans);
+  font-size: 0.72rem; letter-spacing: 0.18em;
+  text-decoration: none;
+  color: var(--cream);
+  background: var(--navy);
+  border: 1px solid var(--navy);
+  padding: 0.9em 2em;
+  transition: background 0.3s ease;
+}
+.bm-whatsapp:hover { background: var(--navy-deep); }
+.bm-done {
+  font-family: var(--sans);
+  font-size: 0.72rem; letter-spacing: 0.18em;
+  cursor: pointer;
+  color: var(--navy);
+  background: none;
+  border: 1px solid rgba(18, 58, 82, 0.4);
+  padding: 0.9em 2em;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+.bm-done:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ═══════════════ FORM FIELD ERROR ═══════════════ */
+.field-error[hidden] { display: none; }
+.field-error {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: #b3402e;
+  margin-top: 0.5rem;
+}
+html[lang="ar"] .field-error { font-family: var(--arabic); font-size: 0.85rem; }
+
+/* ── Hero carries the build sequence ── */
+.hero-bg img,
+.hero-bg canvas {
+  object-position: center center;
+  /* gentle enough that the lit frames still read warm, dark enough that the
+     wordmark holds against the concrete ones */
+  filter: brightness(0.84) saturate(1.05) contrast(1.02);
+}
+/* Centre scrim gives the wordmark a quiet field without flattening the frame;
+   neutral rather than navy, since this footage sits on true black. */
+.hero-veil {
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 47%, rgba(8,12,16,0.66) 0%, rgba(8,12,16,0.40) 46%, transparent 78%),
+    linear-gradient(to bottom, rgba(8,12,16,0.58) 0%, rgba(8,12,16,0.16) 30%,
+                    rgba(8,12,16,0.24) 62%, rgba(8,12,16,0.82) 100%);
+}
+
+/* Wordmark treatment — matches the React build */
+.hero-eyebrow {
+  font-size: 0.72rem; letter-spacing: 0.42em;
+  color: var(--gold-soft);
+  text-shadow: 0 2px 18px rgba(0,0,0,0.75);
+  margin-bottom: 1.9rem;
+  display: flex; align-items: center; justify-content: center; gap: 1.1rem;
+}
+.hero-eyebrow::before, .hero-eyebrow::after {
+  content: ""; height: 1px; width: clamp(24px, 5vw, 64px);
+  background: linear-gradient(90deg, transparent, rgba(224,189,143,0.85));
+}
+.hero-eyebrow::after { background: linear-gradient(90deg, rgba(224,189,143,0.85), transparent); }
+.hero-calligraphy { text-shadow: 0 2px 10px rgba(0,0,0,0.55), 0 10px 60px rgba(0,0,0,0.75); }
+.hero-title {
+  color: #fff;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+  margin-top: 1.7rem;
+}
+.hero-tagline {
+  color: rgba(250,247,242,0.94);
+  text-shadow: 0 2px 22px rgba(0,0,0,0.8);
+  margin-top: 1.6rem;
+}
+
+/* ── Hero typography: give the type a field of its own ──
+   The model sits low in frame, so the wordmark lifts into the upper third
+   rather than sitting across the building. The offset is applied in
+   script.js alongside the scroll translate, since both share `transform`. */
+.hero-content { width: 100%; }
+.hero-tagline { margin-top: 1.5rem; }
+
+/* Stage captions: a rule-and-numeral gives them an anchor and a reading
+   order. Horizontal rule rather than a vertical one — it matches the
+   chapter and stat rules used everywhere else on the site. */
+.hero-stage {
+  left: clamp(1.5rem, 8vw, 8rem);
+  bottom: 24%;
+  max-width: min(24rem, 34vw);
+}
+.hero-stage.right { left: auto; right: clamp(1.5rem, 8vw, 8rem); text-align: right; }
+.stage-num {
+  display: flex; align-items: center; gap: 0.85rem;
+  font-family: var(--sans); font-weight: 300;
+  font-size: 0.62rem; letter-spacing: 0.34em;
+  color: rgba(224,189,143,0.72);
+  margin-bottom: 0.95rem;
+}
+.stage-num::before {
+  content: ""; height: 1px; width: 36px; flex: none;
+  background: linear-gradient(90deg, transparent, rgba(224,189,143,0.85));
+}
+.hero-stage.right .stage-num { justify-content: flex-end; }
+.hero-stage.right .stage-num::before {
+  order: 2;
+  background: linear-gradient(90deg, rgba(224,189,143,0.85), transparent);
+}
+.stage-eyebrow { margin-bottom: 0.7rem; }
+.stage-title { font-size: clamp(1.4rem, 2.7vw, 2rem); }
+
+/* Progress hairline: a 560vh sticky section needs to say where you are. */
+.hero-progress {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 1px; z-index: 3;
+  background: rgba(224,189,143,0.13);
+  pointer-events: none;
+}
+.hero-progress span {
+  display: block; height: 100%; width: 0;
+  background: linear-gradient(90deg, rgba(224,189,143,0.35), var(--gold-soft));
+}
+
+[dir="rtl"] .hero-stage {
+  left: auto; right: clamp(1.5rem, 8vw, 8rem); text-align: right;
+}
+[dir="rtl"] .hero-stage .stage-num { justify-content: flex-end; }
+[dir="rtl"] .hero-stage .stage-num::before {
+  order: 2;
+  background: linear-gradient(90deg, rgba(224,189,143,0.85), transparent);
+}
+[dir="rtl"] .hero-stage.right {
+  right: auto; left: clamp(1.5rem, 8vw, 8rem); text-align: left;
+}
+[dir="rtl"] .hero-stage.right .stage-num { justify-content: flex-start; }
+[dir="rtl"] .hero-stage.right .stage-num::before {
+  order: 0;
+  background: linear-gradient(90deg, transparent, rgba(224,189,143,0.85));
+}
+[dir="rtl"] .hero-progress span { margin-left: auto; }
+
+@media (max-width: 820px) {
+  .hero-stage { max-width: min(20rem, 62vw); bottom: 20%; }
+}
+
+/* ── Subscribe confirmation: brand palette, not a bare green line ── */
+.news-done {
+  display: inline-flex; align-items: center; gap: 0.65rem;
+  font-family: var(--sans); font-weight: 300;
+  font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--char);
+  margin-top: 1.15rem;
+  padding: 0.62rem 1.05rem 0.62rem 0.72rem;
+  background: rgba(201,154,91,0.09);
+  border: 1px solid rgba(201,154,91,0.32);
+  border-radius: 999px;
+  animation: newsDoneIn 0.45s cubic-bezier(0.22,0.61,0.36,1) both;
+}
+.news-done::before {
+  content: "";
+  width: 17px; height: 17px; flex: none;
+  border-radius: 50%;
+  background: var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+}
+@keyframes newsDoneIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+html[lang="ar"] .news-done { font-family: var(--arabic); letter-spacing: 0; font-size: 0.85rem; }
+
+/* ── Overview: editorial two-column so the block spans the section ──
+   Justified text with auto-hyphens was opening rivers across a narrow
+   62ch measure while two thirds of the row sat empty. Heading anchors the
+   left, prose takes the right at a measure that's still comfortable. */
+.pd-desc {
+  max-width: 78ch;
+  text-align: start;
+  hyphens: manual;
+  -webkit-hyphens: manual;
+}
+@media (min-width: 1000px) {
+  .pd-section:has(> .pd-desc) {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    column-gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .pd-section:has(> .pd-desc) .pd-h { margin-bottom: 0; }
 }

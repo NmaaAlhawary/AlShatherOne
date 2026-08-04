@@ -111,13 +111,12 @@ export function Footer() {
             />
             <button type="submit">{L({ en: "SUBSCRIBE", ar: "اشترك" })}</button>
           </form>
-          {done && <p className="news-done">{L({ en: "✓ Your email is ready to send — just press send.", ar: "✓ رسالتك جاهزة — اضغط إرسال فقط." })}</p>}
+          {done && <p className="news-done">{L({ en: "Your email is ready to send — just press send.", ar: "رسالتك جاهزة — اضغط إرسال فقط." })}</p>}
         </div>
         <div className="footer-cols">
           <div className="fcol">
             <h4>{L({ en: "Explore", ar: "استكشف" })}</h4>
             <Link to="/about">{L({ en: "About", ar: "من نحن" })}</Link>
-            <Link to="/#services">{L({ en: "Services", ar: "خدماتنا" })}</Link>
             <Link to="/projects">{L({ en: "Projects", ar: "المشاريع" })}</Link>
             <Link to="/gallery">{L({ en: "Gallery", ar: "المعرض" })}</Link>
           </div>

@@ -5,6 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>الشاذروان — Al Shatherwan for Housing</title>
 <meta name="description" content="Since 2010, Al Shatherwan for Housing has been building high-quality homes in prime locations across Jordan — where comfort meets value.">
+<link rel="canonical" href="https://nmaaalhawary.github.io/AlShatherOne/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Al Shatherwan for Housing — شركة الشاذروان للإسكان">
+<meta property="og:title" content="الشاذروان — Al Shatherwan for Housing">
+<meta property="og:description" content="Since 2010, Al Shatherwan for Housing has been building high-quality homes in prime locations across Jordan — where comfort meets value.">
+<meta property="og:url" content="https://nmaaalhawary.github.io/AlShatherOne/">
+<meta property="og:image" content="https://nmaaalhawary.github.io/AlShatherOne/assets/hero-clean.jpg">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1532">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ar_JO">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="الشاذروان — Al Shatherwan for Housing">
+<meta name="twitter:description" content="Since 2010, Al Shatherwan for Housing has been building high-quality homes in prime locations across Jordan — where comfort meets value.">
+<meta name="twitter:image" content="https://nmaaalhawary.github.io/AlShatherOne/assets/hero-clean.jpg">
 <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,23 +61,42 @@
   </div>
 </nav>
 
-<!-- ══════════ HERO ══════════ -->
-<header class="hero" id="hero">
-  <div class="hero-bg" id="heroBg">
-    <img src="assets/hero-clean.jpg" alt="Al Shatherwan residence at night">
-  </div>
-  <div class="hero-veil"></div>
-  <div class="hero-content">
-    <p class="hero-eyebrow reveal">EST. 2010 — AMMAN, JORDAN</p>
-    <h1 class="hero-calligraphy reveal">الشاذروان</h1>
-    <p class="hero-title reveal">AL SHATHERWAN <span>FOR HOUSING</span></p>
-    <p class="hero-tagline reveal">Where comfort meets value.</p>
-  </div>
-  <div class="scroll-hint">
-    <span>SCROLL</span>
-    <div class="scroll-line"></div>
-  </div>
-</header>
+<!-- ══════════ HERO — scroll-driven rotation ══════════ -->
+<div class="hero-track" id="heroTrack">
+  <header class="hero" id="hero">
+    <div class="hero-bg" id="heroBg">
+      <img fetchpriority="high" src="assets/buildseq/poster.webp" alt="Al Shatherwan residence" id="heroPoster">
+      <canvas id="rotCanvas" aria-hidden="true"></canvas>
+    </div>
+    <div class="hero-veil"></div>
+    <div class="hero-content" id="heroContent">
+      <p class="hero-eyebrow reveal">EST. 2010 — AMMAN, JORDAN</p>
+      <h1 class="hero-calligraphy reveal">الشاذروان</h1>
+      <p class="hero-title reveal">AL SHATHERWAN <span>FOR HOUSING</span></p>
+      <p class="hero-tagline reveal">Where comfort meets value.</p>
+    </div>
+    <div class="hero-stage" id="heroStage1">
+      <span class="stage-num">01</span>
+      <p class="stage-eyebrow">THE FOUNDATION<span class="ar"> — الأساس</span></p>
+      <p class="stage-title">Columns, footings, bedrock.</p>
+    </div>
+    <div class="hero-stage right" id="heroStage2">
+      <span class="stage-num">02</span>
+      <p class="stage-eyebrow">FLOOR BY FLOOR<span class="ar"> — طابقاً بطابق</span></p>
+      <p class="stage-title">Slabs, walls, then light.</p>
+    </div>
+    <div class="hero-stage" id="heroStage3">
+      <span class="stage-num">03</span>
+      <p class="stage-eyebrow">LAYER BY LAYER<span class="ar"> — طبقة بطبقة</span></p>
+      <p class="stage-title">See what goes into every home.</p>
+    </div>
+    <div class="scroll-hint" id="scrollHint">
+      <span>SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+    <div class="hero-progress" aria-hidden="true"><span id="heroProgress"></span></div>
+  </header>
+</div>
 
 <!-- ══════════ CHAPTER I — THE STORY ══════════ -->
 <section class="chapter chapter-story" id="story">
@@ -70,8 +104,8 @@
   <div class="chapter-inner">
     <p class="chapter-num reveal" data-ar="الفصل الأول">CHAPTER I</p>
     <h2 class="chapter-title reveal" data-ar="قصتنا">The Story</h2>
-    <div class="chapter-rule reveal"></div>
-    <p class="story-lead reveal">Since 2010, Al Shatherwan for Housing has been building high&#8209;quality homes in prime locations — where comfort meets value.</p>
+    <div class="chapter-ornament reveal" aria-hidden="true">✦</div>
+    <p class="story-lead reveal">Since 2010, Al Shatherwan for Housing has been building high&#8209;quality homes in prime locations — <em>where comfort meets value.</em></p>
     <div class="story-stats reveal">
       <div class="stat">
         <span class="stat-value"><span class="stat-num" data-count="15">0</span><span class="stat-plus">+</span></span>
@@ -111,11 +145,6 @@
     <h2 class="chapter-title on-blue reveal" data-ar="ابدأ قصتك">Begin Your Story</h2>
     <div class="chapter-rule gold reveal"></div>
     <p class="contact-lead reveal">Your ideal home in Amman is waiting. Reach out and let us walk you through it.</p>
-    <div class="contact-actions reveal">
-      <a class="btn-solid" href="https://instagram.com/alshatherwan._" target="_blank" rel="noopener">FOLLOW ON INSTAGRAM</a>
-      <a class="btn-ghost" href="https://wa.me/962790489291" target="_blank" rel="noopener">WHATSAPP US</a>
-      <a class="btn-ghost" href="https://web.facebook.com/p/%D8%A7%D9%84%D8%B4%D8%A7%D8%B0%D8%B1%D9%88%D8%A7%D9%86-%D9%84%D9%84%D8%A7%D8%B3%D9%83%D8%A7%D9%86-Shatherwan-Housing-61583853203737/" target="_blank" rel="noopener">FACEBOOK</a>
-    </div>
     <p class="contact-note reveal">@alshatherwan._ &nbsp;·&nbsp; 07 9048 9291 &nbsp;·&nbsp; Amman, Jordan<span class="ar"> — عمّان، الأردن</span></p>
   </div>
 </section>
@@ -130,7 +159,7 @@
         <input type="email" id="newsEmail" placeholder="Email address" required>
         <button type="submit">SUBSCRIBE</button>
       </form>
-      <p class="news-done" id="newsDone" hidden>✓ Thank you — we'll be in touch.</p>
+      <p class="news-done" id="newsDone" hidden>Thank you — we'll be in touch.</p>
     </div>
     <div class="footer-cols">
       <div class="fcol">
@@ -170,7 +199,7 @@
   </button>
   <div class="chat-panel" id="chatPanel" hidden>
     <div class="chat-header">
-      <img src="assets/logo.jpg" alt="">
+      <img loading="lazy" decoding="async" src="assets/logo.jpg" alt="">
       <div>
         <p class="chat-title">Shatherwan Concierge</p>
         <p class="chat-status"><span class="chat-dot"></span>Online<span class="ar"> — في خدمتك</span></p>

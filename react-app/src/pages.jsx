@@ -3,8 +3,8 @@ import { createPortal } from "react-dom";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useLang } from "./lang.jsx";
 import { Reveal } from "./chrome.jsx";
-import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, SERVICES, SOCIAL, wa, asset } from "./data.js";
-import { GalleryRing, ScrollHero } from "./three3d.jsx";
+import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, wa, asset } from "./data.js";
+import { GalleryRing } from "./three3d.jsx";
 
 const PageHero = ({ eyebrow, title }) => {
   const { L } = useLang();
@@ -39,21 +39,185 @@ const ServiceIcon = ({ name }) => (
   </svg>
 );
 
-/* ═══════════ SERVICES — compact boxes inside "Begin Your Story" ═══════════ */
-function ServicesBoxes() {
+/* ═══════════ HERO — scroll-scrubbed build sequence ═══════════
+   240 JPEGs blended from the raw-concrete and finished passes, so scrolling
+   walks the building from shell to finish. Mirrors the vanilla implementation
+   in ../../script.js — keep the two in step. */
+const BUILD_FRAMES = 240;
+const buildFrame = (i) => asset(`/assets/buildseq/frame_${String(i + 1).padStart(4, "0")}.webp`);
+
+/* Windows track the build: footings to ~0.15, floors rising to ~0.45, complete
+   around 0.55, opening apart from ~0.62 on. The finished building gets a
+   caption-free beat to itself. */
+const stageAt = (p) =>
+  p > 0.15 && p < 0.30 ? 0 : p > 0.36 && p < 0.50 ? 1 : p > 0.66 ? 2 : -1;
+
+/* The type lifts into the upper third and the model drops toward the lower
+   frame, so the two never sit on top of each other. */
+const LIFT = 0.1;
+const DROP = 0.07;
+
+function BuildHero() {
   const { L } = useLang();
+  const trackRef = useRef(null);
+  const canvasRef = useRef(null);
+  const bgRef = useRef(null);
+  const contentRef = useRef(null);
+  const hintRef = useRef(null);
+  const veilRef = useRef(null);
+  const progressRef = useRef(null);
+  const [stage, setStage] = useState(-1);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const track = trackRef.current;
+    if (!canvas || !track) return;
+    const ctx = canvas.getContext("2d");
+    const frames = new Array(BUILD_FRAMES).fill(null);
+    let current = -1, raf = 0, ticking = false, dead = false;
+
+    const sizeCanvas = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+    };
+
+    const nearest = (i) => {
+      if (frames[i]) return i;
+      for (let d = 1; d < BUILD_FRAMES; d++) {
+        if (frames[i - d]) return i - d;
+        if (frames[i + d]) return i + d;
+      }
+      return -1;
+    };
+
+    const draw = (i, force) => {
+      const idx = nearest(Math.max(0, Math.min(BUILD_FRAMES - 1, i)));
+      if (idx < 0 || (idx === current && !force)) return;
+      current = idx;
+      const img = frames[idx];
+      const cw = canvas.width, ch = canvas.height;
+      if (!cw || !ch) return;
+      const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+      const w = img.naturalWidth * s, h = img.naturalHeight * s;
+      const dx = (cw - w) / 2;
+      const dy = (ch - h) / 2 + DROP * ch;
+      ctx.clearRect(0, 0, cw, ch);
+      // On wide, short viewports the drop opens a band above the frame. Fill it by
+      // stretching the frame's own top rows — stays seamless as the lighting shifts.
+      if (dy > 0) ctx.drawImage(img, 0, 0, img.naturalWidth, 2, dx, 0, w, dy + 1);
+      ctx.drawImage(img, dx, dy, w, h);
+    };
+
+    sizeCanvas();
+
+    // Coarse pass first so early scrubbing lands near the right frame,
+    // then progressively fill the gaps.
+    const order = [];
+    for (let step = 16; step >= 1; step >>= 1)
+      for (let i = 0; i < BUILD_FRAMES; i += step)
+        if (!order.includes(i)) order.push(i);
+
+    const timers = [];
+    let loaded = 0;
+    order.forEach((i, rank) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.onload = img.onerror = () => {
+        if (dead) return;
+        if (img.naturalWidth) frames[i] = img;
+        loaded++;
+        const bg = bgRef.current;
+        if (frames[0] && bg && !bg.classList.contains("frames-ready")) {
+          bg.classList.add("frames-ready");
+          draw(current < 0 ? 0 : current, true);
+        }
+        if (loaded === BUILD_FRAMES) draw(current < 0 ? 0 : current, true);
+      };
+      timers.push(setTimeout(() => { img.src = buildFrame(i); }, rank * 10));
+    });
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      raf = requestAnimationFrame(() => {
+        ticking = false;
+        const rect = track.getBoundingClientRect();
+        const range = rect.height - window.innerHeight;
+        const p = range > 0 ? Math.max(0, Math.min(1, -rect.top / range)) : 0;
+        draw(Math.round(p * (BUILD_FRAMES - 1)));
+        // Title clears early so the first caption can land while the base is
+        // still going down
+        const fade = Math.max(0, 1 - p / 0.13);
+        if (contentRef.current) {
+          contentRef.current.style.opacity = fade;
+          // LIFT pushes the type into the upper third so it never sits across
+          // the model; shares `transform` with the scroll translate.
+          contentRef.current.style.transform =
+            `translateY(${-LIFT * window.innerHeight + p * -80}px)`;
+          contentRef.current.style.visibility = fade === 0 ? "hidden" : "visible";
+        }
+        if (hintRef.current) hintRef.current.style.opacity = String(Math.max(0, 1 - p / 0.08));
+        // The scrim only exists to hold the wordmark. Once that's gone, lift it
+        // so the finished building lands at full strength.
+        if (veilRef.current) veilRef.current.style.opacity = String(1 - 0.5 * Math.min(1, p / 0.28));
+        if (progressRef.current) progressRef.current.style.width = (p * 100).toFixed(2) + "%";
+        setStage(stageAt(p));
+      });
+    };
+    const onResize = () => { sizeCanvas(); draw(current, true); };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    onScroll();
+
+    return () => {
+      dead = true;
+      timers.forEach(clearTimeout);
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  const STAGES = [
+    { k: { en: "THE FOUNDATION", ar: "الأساس" }, t: { en: "Columns, footings, bedrock.", ar: "أعمدة وقواعد وصخر." } },
+    { k: { en: "FLOOR BY FLOOR", ar: "طابقاً بطابق" }, t: { en: "Slabs, walls, then light.", ar: "بلاطات وجدران ثم ضوء." } },
+    { k: { en: "LAYER BY LAYER", ar: "طبقة بطبقة" }, t: { en: "See what goes into every home.", ar: "شاهد ما يدخل في كل بيت." } },
+  ];
+
   return (
-    <div className="svc-block" id="services">
-      <Reveal as="p" className="svc-eyebrow">{L({ en: "WHAT WE DO", ar: "ماذا نقدّم" })}</Reveal>
-      <div className="svc-grid">
-        {SERVICES.map((s, i) => (
-          <Reveal as="article" className="svc-box" key={s.n} delay={i * 70}>
-            <span className="svc-icon"><ServiceIcon name={s.icon} /></span>
-            <h3 className="svc-title">{L(s.t)}</h3>
-            <p className="svc-text">{L(s.p)}</p>
-          </Reveal>
+    <div className="hero-track" ref={trackRef}>
+      <header className="hero" id="hero">
+        <div className="hero-bg" ref={bgRef}>
+          <img fetchpriority="high" src={asset("/assets/buildseq/poster.webp")} alt="Al Shatherwan residence" />
+          <canvas ref={canvasRef} aria-hidden="true"></canvas>
+        </div>
+        <div className="hero-veil" ref={veilRef}></div>
+        <div className="hero-content" ref={contentRef}>
+          <p className="hero-eyebrow reveal visible">{L({ en: `EST. 2010 — AMMAN, JORDAN`, ar: "تأسست عام ٢٠١٠ — عمّان، الأردن" })}</p>
+          <h1 className="hero-calligraphy reveal visible">الشاذروان</h1>
+          <p className="hero-title reveal visible">
+            {L({
+              en: <>AL SHATHERWAN <span>FOR HOUSING</span></>,
+              ar: <>شركة الشاذروان <span>للإسكان</span></>,
+            })}
+          </p>
+          <p className="hero-tagline reveal visible">{L({ en: "Where comfort meets value.", ar: "حيث تلتقي الراحة بالقيمة." })}</p>
+        </div>
+        {STAGES.map((s, i) => (
+          <div key={i} className={`hero-stage ${i === 1 ? "right" : ""} ${stage === i ? "on" : ""}`}>
+            <span className="stage-num">{`0${i + 1}`}</span>
+            <p className="stage-eyebrow">{L(s.k)}</p>
+            <p className="stage-title">{L(s.t)}</p>
+          </div>
         ))}
-      </div>
+        <div className="scroll-hint" ref={hintRef}>
+          <span>{L({ en: "SCROLL", ar: "مرر" })}</span>
+          <div className="scroll-line"></div>
+        </div>
+        <div className="hero-progress" aria-hidden="true"><span ref={progressRef}></span></div>
+      </header>
     </div>
   );
 }
@@ -61,7 +225,6 @@ function ServicesBoxes() {
 /* ═══════════ HOME ═══════════ */
 export function Home() {
   const { L } = useLang();
-  const heroRef = useRef(null);
   const [count, setCount] = useState(2010);
 
   useEffect(() => {
@@ -76,41 +239,9 @@ export function Home() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  useEffect(() => {
-    let raf;
-    const zoom = () => {
-      const el = heroRef.current;
-      if (el) {
-        const y = window.scrollY;
-        const p = Math.min(y / window.innerHeight, 1);
-        el.style.transform = `translateY(${y * 0.16}px) scale(${1 + p * 0.3})`;
-      }
-      raf = requestAnimationFrame(zoom);
-    };
-    raf = requestAnimationFrame(zoom);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
   return (
     <>
-      <header className="hero" id="hero">
-        <div className="hero-bg" ref={heroRef}>
-          <img src={asset("/assets/hero-clean.jpg")} alt="Al Shatherwan residence at night" />
-        </div>
-        <div className="hero-veil"></div>
-        <div className="hero-content">
-          <p className="hero-eyebrow reveal visible">{L({ en: `EST. 2010 — AMMAN, JORDAN`, ar: "تأسست عام ٢٠١٠ — عمّان، الأردن" })}</p>
-          <h1 className="hero-calligraphy reveal visible">الشاذروان</h1>
-          <p className="hero-title reveal visible">{L({ en: "AL SHATHERWAN FOR HOUSING", ar: "شركة الشاذروان للإسكان" })}</p>
-          <p className="hero-tagline reveal visible">{L({ en: "Where comfort meets value.", ar: "حيث تلتقي الراحة بالقيمة." })}</p>
-        </div>
-        <div className="scroll-hint">
-          <span>{L({ en: "SCROLL", ar: "مرر" })}</span>
-          <div className="scroll-line"></div>
-        </div>
-      </header>
-
-      <ScrollHero />
+      <BuildHero />
 
       <section className="chapter chapter-story" id="story">
         <div className="pattern-bg"></div>
@@ -161,12 +292,6 @@ export function Home() {
           <Reveal as="h2" className="chapter-title on-blue">{L({ en: "Begin Your Story", ar: "ابدأ قصتك" })}</Reveal>
           <Reveal className="chapter-rule gold"></Reveal>
           <Reveal as="p" className="contact-lead">{L({ en: "Your ideal home in Amman is waiting. Reach out and let us walk you through it.", ar: "منزلك المثالي في عمّان بانتظارك. تواصل معنا ودعنا نرافقك في الجولة." })}</Reveal>
-          <ServicesBoxes />
-          <Reveal className="contact-actions">
-            <a className="btn-solid" href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer">{L({ en: "FOLLOW ON INSTAGRAM", ar: "تابعنا على إنستغرام" })}</a>
-            <a className="btn-ghost" href={SOCIAL.whatsapp} target="_blank" rel="noopener noreferrer">{L({ en: "WHATSAPP US", ar: "راسلنا على واتساب" })}</a>
-            <a className="btn-ghost" href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer">{L({ en: "FACEBOOK", ar: "تابعنا على فيسبوك" })}</a>
-          </Reveal>
         </div>
       </section>
     </>

@@ -97,15 +97,34 @@ const WHATSAPP_NUMBER = "962790489291"; // from the company's Facebook page
     if (opt) opt.selected = true;
   }
 
+  const phoneInput = document.getElementById("bfPhone");
+  const phoneErr = document.getElementById("bfPhoneErr");
+  phoneInput.addEventListener("input", () => { phoneErr.hidden = true; });
+
+  const modal = document.getElementById("bookingModal");
+  const closeModal = () => { modal.hidden = true; document.body.style.overflow = ""; };
+  document.getElementById("bmDone").addEventListener("click", closeModal);
+  document.getElementById("bmX").addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeModal(); });
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const name = document.getElementById("bfName").value.trim();
-    const phone = document.getElementById("bfPhone").value.trim();
+    const phone = phoneInput.value.trim();
     const project = document.getElementById("bfProject").value;
     const date = dateInput.value;
     const time = document.getElementById("bfTime").value;
+
+    // Jordanian mobile: 07[789]XXXXXXX, optionally prefixed +962 / 00962
+    if (!/^(?:\+?962|00962|0)?7[789]\d{7}$/.test(phone.replace(/[\s-]/g, ""))) {
+      phoneErr.hidden = false;
+      phoneInput.focus();
+      return;
+    }
+
     const msg =
-      `مرحباً شركة الشاذروان للإسكان 🏠\n` +
+      `مرحباً شركة الشاذروان للإسكان\n` +
       `أرغب بحجز موعد لمعاينة منزل.\n\n` +
       `Viewing request:\n` +
       `• Name: ${name}\n` +
@@ -113,8 +132,12 @@ const WHATSAPP_NUMBER = "962790489291"; // from the company's Facebook page
       `• Project: ${project}\n` +
       `• Date: ${date}\n` +
       `• Time: ${time}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-    document.getElementById("bookingConfirm").hidden = false;
+    const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(waUrl, "_blank");
+    document.getElementById("bmWhatsApp").href = waUrl;
+    document.getElementById("bmSummary").textContent = `${project} · ${date} · ${time}`;
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
   });
 })();
 
@@ -265,17 +288,117 @@ const WHATSAPP_NUMBER = "962790489291"; // from the company's Facebook page
   });
 })();
 
-// ── Hero: full building at rest, slow zoom while scrolling
+// ── Hero: scroll-scrubbed build — drawing, then structure, then the finished home
 (function () {
+  const canvas = document.getElementById("rotCanvas");
+  const track = document.getElementById("heroTrack");
+  if (!canvas || !track) return;
+
+  const FRAME_COUNT = 240;
+  const src = (i) => `assets/buildseq/frame_${String(i + 1).padStart(4, "0")}.webp`;
+  const frames = new Array(FRAME_COUNT).fill(null);
+  const ctx = canvas.getContext("2d");
   const heroBg = document.getElementById("heroBg");
-  if (!heroBg) return;
-  function zoom() {
-    const y = window.scrollY;
-    const p = Math.min(y / window.innerHeight, 1);
-    heroBg.style.transform = `translateY(${y * 0.16}px) scale(${1 + p * 0.3})`;
-    requestAnimationFrame(zoom);
+  const heroContent = document.getElementById("heroContent");
+  const stage1 = document.getElementById("heroStage1");
+  const stage2 = document.getElementById("heroStage2");
+  const stage3 = document.getElementById("heroStage3");
+  const scrollHint = document.getElementById("scrollHint");
+  const heroVeil = document.querySelector(".hero-veil");
+  const heroProgress = document.getElementById("heroProgress");
+  // The type lifts into the upper third and the model drops toward the lower
+  // frame, so the two never sit on top of each other. LIFT shares `transform`
+  // with the scroll translate below.
+  const LIFT = 0.1;
+  const DROP = 0.07;
+  let currentFrame = -1;
+
+  // Load key frames first so early scrubbing has something to show, then fill the gaps
+  const order = [];
+  for (let step = 16; step >= 1; step = step >> 1)
+    for (let i = 0; i < FRAME_COUNT; i += step)
+      if (!order.includes(i)) order.push(i);
+
+  let loaded = 0;
+  order.forEach((i, rank) => {
+    const img = new Image();
+    img.decoding = "async";
+    img.onload = () => {
+      frames[i] = img;
+      loaded++;
+      if (i === 0) { heroBg.classList.add("frames-ready"); draw(0); }
+      if (loaded === FRAME_COUNT) draw(currentFrame < 0 ? 0 : currentFrame, true);
+    };
+    // Stagger kickoff slightly so the poster and fonts win the first network beats
+    setTimeout(() => { img.src = src(i); }, rank * 12);
+  });
+
+  function nearestLoaded(i) {
+    if (frames[i]) return i;
+    for (let d = 1; d < FRAME_COUNT; d++) {
+      if (frames[i - d]) return i - d;
+      if (frames[i + d]) return i + d;
+    }
+    return -1;
   }
-  requestAnimationFrame(zoom);
+
+  function sizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
+  }
+  sizeCanvas();
+  window.addEventListener("resize", () => { sizeCanvas(); draw(currentFrame, true); });
+
+  function draw(i, force) {
+    const idx = nearestLoaded(Math.max(0, Math.min(FRAME_COUNT - 1, i)));
+    if (idx < 0 || (idx === currentFrame && !force)) return;
+    currentFrame = idx;
+    const img = frames[idx];
+    const cw = canvas.width, ch = canvas.height;
+    const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+    const w = img.naturalWidth * scale, h = img.naturalHeight * scale;
+    const dx = (cw - w) / 2;
+    const dy = (ch - h) / 2 + DROP * ch;
+    ctx.clearRect(0, 0, cw, ch);
+    // On wide, short viewports the drop opens a band above the frame. Fill it by
+    // stretching the frame's own top rows — stays seamless as the lighting shifts.
+    if (dy > 0) ctx.drawImage(img, 0, 0, img.naturalWidth, 2, dx, 0, w, dy + 1);
+    ctx.drawImage(img, dx, dy, w, h);
+  }
+
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const rect = track.getBoundingClientRect();
+      const range = rect.height - window.innerHeight;
+      const p = Math.max(0, Math.min(1, -rect.top / range));
+      draw(Math.round(p * (FRAME_COUNT - 1)));
+
+      // Title clears early so the first caption can land while the base is
+      // still going down
+      const fade = Math.max(0, 1 - p / 0.13);
+      heroContent.style.opacity = fade;
+      heroContent.style.transform = `translateY(${-LIFT * window.innerHeight + p * -80}px)`;
+      heroContent.style.visibility = fade === 0 ? "hidden" : "visible";
+      scrollHint.style.opacity = Math.max(0, 1 - p / 0.08);
+      // The scrim only exists to hold the wordmark. Once that's gone, lift it
+      // so the finished building lands at full strength.
+      if (heroVeil) heroVeil.style.opacity = String(1 - 0.5 * Math.min(1, p / 0.28));
+      if (heroProgress) heroProgress.style.width = (p * 100).toFixed(2) + "%";
+      // Windows track the build: footings to ~0.15, floors rising to ~0.45,
+      // complete around 0.55, opening apart from ~0.62 on. The finished
+      // building gets a caption-free beat to itself.
+      stage1.classList.toggle("on", p > 0.15 && p < 0.30);
+      stage2.classList.toggle("on", p > 0.36 && p < 0.50);
+      stage3.classList.toggle("on", p > 0.66);
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 })();
 
 // ── Gentle parallax on hero / residence imagery
@@ -364,8 +487,6 @@ const I18N_AR = {
   ".book-cta-eyebrow": "معاينات خاصة — PRIVATE VIEWINGS",
   ".book-cta-title": "احجز زيارتك",
   ".contact-lead": "منزلك المثالي في عمّان بانتظارك. تواصل معنا ودعنا نرافقك في الجولة.",
-  ".btn-solid": "تابعنا على إنستغرام",
-  ".btn-ghost": ["راسلنا على واتساب", "تابعنا على فيسبوك"],
   ".chat-title": "مساعد الشاذروان",
   // footer
   ".footer-news-title": "انضم إلى قائمتنا",
