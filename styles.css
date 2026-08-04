@@ -2300,3 +2300,61 @@ html[dir="rtl"] .feature { text-align: start; }
 .cbtn-primary { background: var(--char); border-color: var(--char); color: var(--cream); }
 .cbtn-primary:hover { background: var(--navy-deep); border-color: var(--navy-deep); color: #fff; }
 html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size: 0.9rem; }
+
+/* ═══════════════════════════════════════════════════
+   PHONE — tap targets and small-label legibility
+   Layout already collapses cleanly and nothing overflows; what fails on a
+   handset is the fine letterspaced type (down to 8.3px) and controls under
+   the 44px touch minimum.
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .hero, .hero-track, .hero-bg { background: #11100f; }
+
+  /* controls to the 44px touch minimum */
+  .nav-toggle {
+    min-width: 44px; min-height: 44px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  }
+  .nav-search, .lang-toggle { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+  .lang-toggle { padding-inline: 0.9rem; }
+  /* .fcol a also matches .sicon, so keep them both at the 44px minimum */
+  .fcol a, .social-icons a { min-height: 44px; display: inline-flex; align-items: center; }
+  .sicon { min-width: 44px; }
+  .pd-back, .pd-enquire, .pd-book, .pd-tour, .cbtn, .btn-solid, .btn-ghost,
+  .res-tour-btn, .listing-btn, .book-cta-link {
+    min-height: 46px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .news-form button { min-height: 44px; padding-inline: 0.9rem; }
+
+  /* wide letterspacing is what makes small labels hard to read on a handset */
+  .nav-brand-en { font-size: 0.56rem; letter-spacing: 0.32em; text-indent: 0.32em; }
+  .fcol h4, .spec-label, .stage-eyebrow, .page-eyebrow, .chapter-num, .svc-eyebrow {
+    font-size: 0.7rem; letter-spacing: 0.2em;
+  }
+  .news-form button, .pd-enquire, .pd-book, .pd-tour, .cbtn,
+  .btn-solid, .btn-ghost, .res-tour-btn, .listing-btn {
+    font-size: 0.74rem; letter-spacing: 0.14em;
+  }
+  .stage-num, .stat-label { font-size: 0.72rem; letter-spacing: 0.2em; }
+  .nav-brand-en { font-size: 0.62rem; }
+  .news-done { font-size: 0.72rem; letter-spacing: 0.1em; }
+  /* .footer-bottom span carries its own size, so target it directly */
+  .footer-bottom, .footer-bottom span { font-size: 0.78rem; line-height: 1.9; }
+  .scroll-hint span { font-size: 0.68rem; letter-spacing: 0.3em; }
+  .residence-sub-en { font-size: 0.7rem; letter-spacing: 0.24em; }
+  .hero-title { letter-spacing: 0.34em; text-indent: 0.34em; }
+}
+/* the footer number is a phone number — make it dialable */
+.footer-bottom a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(18,58,82,0.25); }
+.footer-bottom a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+@media (max-width: 640px) {
+  /* form fields: keep the 16px+ size that stops iOS zooming on focus, and
+     bring the shorter ones up to the touch minimum */
+  .booking-form input, .booking-form select, .news-form input {
+    min-height: 46px; font-size: 1.02rem;
+  }
+  .booking-form button[type="submit"], .btn-book { min-height: 50px; }
+  /* the dial link is inline text — give it a usable tap area */
+  .footer-bottom a { padding: 0.35rem 0; display: inline-block; }
+}

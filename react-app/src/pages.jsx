@@ -56,6 +56,11 @@ const stageAt = (p) =>
    frame, so the two never sit on top of each other. */
 const LIFT = 0.1;
 const DROP = 0.07;
+/* The model's own bounding box across the sequence, measured at 1275x963 of the
+   1920x1080 frame. Cover-fitting a 16:9 frame into a portrait phone crops ~74%
+   of the width away, so on narrow screens we fit this box instead. */
+const CONTENT_W = 1300, CONTENT_H = 1000;
+const SEQ_BG = "#11100f";
 
 function BuildHero() {
   const { L } = useLang();
@@ -98,14 +103,22 @@ function BuildHero() {
       const img = frames[idx];
       const cw = canvas.width, ch = canvas.height;
       if (!cw || !ch) return;
-      const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-      const w = img.naturalWidth * s, h = img.naturalHeight * s;
+      const iw = img.naturalWidth, ih = img.naturalHeight;
+      // Cover on landscape; on portrait that would crop the model away, so fall
+      // back to whichever scale keeps the whole model on screen.
+      const cover = Math.max(cw / iw, ch / ih);
+      const content = Math.min(cw / CONTENT_W, ch / CONTENT_H);
+      const s = Math.min(cover, content);
+      const w = iw * s, h = ih * s;
       const dx = (cw - w) / 2;
       const dy = (ch - h) / 2 + DROP * ch;
-      ctx.clearRect(0, 0, cw, ch);
-      // On wide, short viewports the drop opens a band above the frame. Fill it by
-      // stretching the frame's own top rows — stays seamless as the lighting shifts.
-      if (dy > 0) ctx.drawImage(img, 0, 0, img.naturalWidth, 2, dx, 0, w, dy + 1);
+      ctx.fillStyle = SEQ_BG;
+      ctx.fillRect(0, 0, cw, ch);
+      // Letterbox bands get the frame's own edge rows stretched across them, so
+      // they stay seamless as the lighting shifts through the sequence.
+      if (dy > 0) ctx.drawImage(img, 0, 0, iw, 2, dx, 0, w, Math.ceil(dy) + 1);
+      const below = ch - (dy + h);
+      if (below > 0) ctx.drawImage(img, 0, ih - 2, iw, 2, dx, ch - Math.ceil(below) - 1, w, Math.ceil(below) + 1);
       ctx.drawImage(img, dx, dy, w, h);
     };
 

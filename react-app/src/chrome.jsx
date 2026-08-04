@@ -144,7 +144,7 @@ export function Footer() {
       <div className="footer-mark" aria-hidden="true">الشاذروان</div>
       <div className="footer-bottom">
         <span>{L({ en: "© 2026 Al Shatherwan for Housing — Est. 2010", ar: "© ٢٠٢٦ شركة الشاذروان للإسكان — تأسست ٢٠١٠" })}</span>
-        <span>{L({ en: "Amman, Jordan · 07 9048 9291", ar: "عمّان، الأردن · ٠٧٩٠٤٨٩٢٩١" })}</span>
+        <span>{L({ en: "Amman, Jordan · ", ar: "عمّان، الأردن · " })}<a href="tel:+962790489291">{L({ en: "07 9048 9291", ar: "٠٧٩٠٤٨٩٢٩١" })}</a></span>
       </div>
     </footer>
   );
