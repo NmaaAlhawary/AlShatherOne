@@ -2213,3 +2213,19 @@ html[lang="ar"] .news-done { font-family: var(--arabic); letter-spacing: 0; font
   }
   .pd-section:has(> .pd-desc) .pd-h { margin-bottom: 0; }
 }
+
+/* ── Residence hero: frame on the building ──
+   building-1719.jpg is a portrait poster with the wordmark baked across the
+   top and a large "1719" across the bottom. At 78% the cover-crop landed
+   mid-digit, chopping the number in half. 40% frames the façade and clears
+   both — the gold "Residence 1719" heading already carries the name. */
+.residence-img img { object-position: center 40%; }
+/* The reframed crop puts the lit façade behind the caption instead of the dark
+   reflection, so the veil needs a scrim under the type — kept local so the
+   upper façade stays bright. */
+.residence-veil {
+  background:
+    radial-gradient(ellipse 72% 42% at 50% 78%, rgba(6,20,32,0.74) 0%, rgba(6,20,32,0.44) 52%, transparent 80%),
+    linear-gradient(to bottom, rgba(7,30,44,0.50) 0%, rgba(7,30,44,0.10) 26%,
+                    rgba(7,30,44,0.34) 62%, rgba(7,30,44,0.90) 100%);
+}
