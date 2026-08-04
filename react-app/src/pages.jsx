@@ -348,7 +348,7 @@ export function About() {
         <div className="chapter-inner wide">
           <div className="house-split">
             <Reveal className="house-media">
-              <div className="house-frame"><img src={asset("/assets/building-1719.jpg")} alt="Al Shatherwan residence" /></div>
+              <div className="house-frame"><img src={asset("/assets/building-1719-hero.jpg")} alt="Al Shatherwan residence" /></div>
             </Reveal>
             <div className="house-copy">
               <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</Reveal>
@@ -494,7 +494,7 @@ export function Projects() {
       <PageHero eyebrow={{ en: "OUR WORK", ar: "أعمالنا" }} title={{ en: "The Projects", ar: "المشاريع" }} />
       <section className="chapter chapter-residence" id="residence">
         <div className="residence-hero">
-          <div className="residence-img"><img src={asset("/assets/building-1719.jpg")} alt="Residence 1719 by night" /></div>
+          <div className="residence-img"><img src={asset("/assets/building-1719-hero.jpg")} alt="Residence 1719 by night" /></div>
           <div className="residence-veil"></div>
           <div className="residence-caption">
             <p className="chapter-num light-num reveal visible">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</p>

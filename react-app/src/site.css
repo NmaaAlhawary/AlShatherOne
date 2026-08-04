@@ -2873,10 +2873,11 @@ html[lang="ar"] .news-done { font-family: var(--arabic); letter-spacing: 0; font
 
 /* ── Residence hero: frame on the building ──
    building-1719.jpg is a portrait poster with the wordmark baked across the
-   top and a large "1719" across the bottom. At 78% the cover-crop landed
-   mid-digit, chopping the number in half. 40% frames the façade and clears
-   both — the gold "Residence 1719" heading already carries the name. */
-.residence-img img { object-position: center 40%; }
+   top and a large "1719" across the bottom. On a phone the container is
+   narrower than the image, so cover scales by height and shows the whole
+   poster — no object-position can hide them. building-1719-hero.jpg is that
+   poster cropped to the facade, so both marks are gone at every size. */
+.residence-img img { object-position: center 46%; }
 /* The reframed crop puts the lit façade behind the caption instead of the dark
    reflection, so the veil needs a scrim under the type — kept local so the
    upper façade stays bright. */
@@ -2980,7 +2981,10 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   .nav-search, .lang-toggle { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
   .lang-toggle { padding-inline: 0.9rem; }
   /* .fcol a also matches .sicon, so keep them both at the 44px minimum */
-  .fcol a, .social-icons a { min-height: 44px; display: inline-flex; align-items: center; }
+  /* flex, not inline-flex — .fcol a stacks, and inline-flex ran the footer
+     links together on one line */
+  .fcol a { min-height: 44px; display: flex; align-items: center; }
+  .social-icons a { min-height: 44px; display: inline-flex; align-items: center; }
   .sicon { min-width: 44px; }
   .pd-back, .pd-enquire, .pd-book, .pd-tour, .cbtn, .btn-solid, .btn-ghost,
   .res-tour-btn, .listing-btn, .book-cta-link {
@@ -3000,6 +3004,11 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   }
   .stage-num, .stat-label { font-size: 0.72rem; letter-spacing: 0.2em; }
   .nav-brand-en { font-size: 0.62rem; }
+
+  /* the numeral already carries a gold rule, so the stacked border was a
+     second line directly above it */
+  .feature { border-top: none; padding-top: 0; }
+  .residence-features { gap: 2.4rem; }
   .news-done { font-size: 0.72rem; letter-spacing: 0.1em; }
   /* .footer-bottom span carries its own size, so target it directly */
   .footer-bottom, .footer-bottom span { font-size: 0.78rem; line-height: 1.9; }
@@ -3019,4 +3028,31 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   .booking-form button[type="submit"], .btn-book { min-height: 50px; }
   /* the dial link is inline text — give it a usable tap area */
   .footer-bottom a { padding: 0.35rem 0; display: inline-block; }
+}
+
+/* ── Mobile menu: centre the links instead of a fixed 30vh top pad ──
+   The fixed pad left a large empty band above the links on shorter
+   handsets. Centring fills the panel at any height, and the links get a
+   real tap target. */
+@media (max-width: 900px) {
+  .nav.menu-open .nav-left {
+    justify-content: center;
+    padding-top: 0;
+    padding-bottom: 6vh;
+    gap: 0.4rem;
+  }
+  .nav.menu-open .nav-left a {
+    font-size: 0.95rem;
+    min-height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    width: 100%;
+  }
+  html[dir="rtl"] .nav.menu-open .nav-left a { font-size: 1.05rem; }
+}
+
+/* Stacked stats were left-packed with ragged right edges — each is only as
+   wide as its content, so the column needs to centre them. */
+@media (max-width: 640px) {
+  .story-stats { align-items: center; }
+  .stat { align-items: center; text-align: center; }
 }

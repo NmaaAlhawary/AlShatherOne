@@ -152,7 +152,7 @@ export function Footer() {
 
 /* ── concierge chatbot ── */
 export function ChatWidget() {
-  const { L } = useLang();
+  const { L, lang } = useLang();
   const [open, setOpen] = useState(false);
   const [msgs, setMsgs] = useState([]);
   const [input, setInput] = useState("");
@@ -160,13 +160,19 @@ export function ChatWidget() {
 
   useEffect(() => {
     if (open && msgs.length === 0)
-      setMsgs([{ who: "bot", text: "Welcome to Al Shatherwan — أهلاً بك في الشاذروان.\nAsk me about our homes, prices, or book a private viewing." }]);
+      setMsgs([{ who: "bot", text: L({
+        en: "Welcome to Al Shatherwan.\nAsk me about our homes, prices, or book a private viewing.",
+        ar: "أهلاً بك في الشاذروان.\nاسألني عن شققنا وأسعارها، أو احجز موعد معاينة خاصة.",
+      }) }]);
   }, [open]); // eslint-disable-line
   useEffect(() => { bodyRef.current?.scrollTo(0, 1e6); }, [msgs]);
 
   const answer = (raw) => {
     const t = raw.toLowerCase();
-    const ar = /[؀-ۿ]/.test(raw);
+    // Follow the site language — the quick-reply chips send English keywords
+    // for matching, so keying off the question alone answered an Arabic
+    // visitor in English. Typing in the other script still switches.
+    const ar = lang === "ar" || /[؀-ۿ]/.test(raw);
     const A = (en, arr, ...actions) => ({ who: "bot", text: ar ? arr : en, actions: actions.filter(Boolean) });
     if (/(book|viewing|visit|appointment|حجز|معاينة|موعد|زيارة)/.test(t))
       return A("With pleasure! You can reserve a private viewing on our booking page.", "بكل سرور! يمكنك حجز موعد المعاينة من صفحة الحجز.", { label: ar ? "احجز الآن" : "Book now", to: "/booking" });
@@ -189,9 +195,11 @@ export function ChatWidget() {
     return A("Thank you! For the most accurate answer, message our team on WhatsApp — we reply within the hour.", "شكراً لسؤالك! تواصل مع فريقنا على واتساب — نرد خلال ساعة.", { label: "WhatsApp", href: SOCIAL.whatsapp });
   };
 
-  const send = (q) => {
+  // `display` is what the visitor sees; `q` is the keyword we match on, so a
+  // localised chip label never shows up as an English bubble.
+  const send = (q, display) => {
     if (!q.trim()) return;
-    setMsgs((m) => [...m, { who: "user", text: q }]);
+    setMsgs((m) => [...m, { who: "user", text: display || q }]);
     setTimeout(() => setMsgs((m) => [...m, answer(q)]), 650);
   };
 
@@ -231,7 +239,7 @@ export function ChatWidget() {
             ))}
           </div>
           <div className="chat-chips">
-            {chips.map((c) => <button key={c.q} type="button" onClick={() => send(c.q)}>{c.label}</button>)}
+            {chips.map((c) => <button key={c.q} type="button" onClick={() => send(c.q, c.label)}>{c.label}</button>)}
           </div>
           <form className="chat-inputbar" onSubmit={(e) => { e.preventDefault(); send(input); setInput(""); }}>
             <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={L({ en: "Ask anything…", ar: "اسأل عن أي شيء…" })} />

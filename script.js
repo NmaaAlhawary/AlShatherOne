@@ -153,17 +153,21 @@ const WHATSAPP_NUMBER = "962790489291"; // from the company's Facebook page
   if (!fab) return;
 
   const CHIPS = [
-    { label: "Available homes", q: "available homes" },
-    { label: "احجز معاينة", q: "book a viewing" },
-    { label: "Location", q: "location" },
-    { label: "Contact", q: "contact" },
+    { en: "Available homes", ar: "الشقق المتوفرة", q: "available homes" },
+    { en: "Book a viewing", ar: "احجز معاينة", q: "book a viewing" },
+    { en: "Location", ar: "الموقع", q: "location" },
+    { en: "Contact", ar: "تواصل معنا", q: "contact" },
   ];
 
   const isArabic = (t) => /[؀-ۿ]/.test(t);
+  const siteArabic = () => document.documentElement.lang === "ar";
 
   function answer(raw) {
     const t = raw.toLowerCase();
-    const ar = isArabic(raw);
+    // Follow the site language — the quick-reply chips send English keywords
+    // for matching, so keying off the question alone answered an Arabic
+    // visitor in English. Typing in the other script still switches.
+    const ar = siteArabic() || isArabic(raw);
 
     if (/(book|viewing|visit|appointment|حجز|معاينة|موعد|زيارة)/.test(t))
       return {
@@ -262,19 +266,27 @@ const WHATSAPP_NUMBER = "962790489291"; // from the company's Facebook page
     if (show && !opened) {
       opened = true;
       setTimeout(() => {
-        addMsg("Welcome to Al Shatherwan — أهلاً بك في الشاذروان.\nAsk me about our homes, prices, or book a private viewing.", "bot");
+        addMsg(siteArabic()
+          ? "أهلاً بك في الشاذروان.\nاسألني عن شققنا وأسعارها، أو احجز موعد معاينة خاصة."
+          : "Welcome to Al Shatherwan.\nAsk me about our homes, prices, or book a private viewing.", "bot");
       }, 350);
     }
     if (show) input.focus();
   }
 
-  CHIPS.forEach(({ label, q }) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.textContent = label;
-    b.addEventListener("click", () => { addMsg(label, "user"); botReply(q); });
-    chipsEl.appendChild(b);
-  });
+  function renderChips() {
+    chipsEl.innerHTML = "";
+    CHIPS.forEach((chip) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      const label = siteArabic() ? chip.ar : chip.en;
+      b.textContent = label;
+      b.addEventListener("click", () => { addMsg(label, "user"); botReply(chip.q); });
+      chipsEl.appendChild(b);
+    });
+  }
+  renderChips();
+  window.addEventListener("langchange", renderChips);
 
   fab.addEventListener("click", () => togglePanel(panel.hidden));
   closeBtn.addEventListener("click", () => togglePanel(false));
