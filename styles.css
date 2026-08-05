@@ -2623,3 +2623,24 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   }
   .nav-side { gap: 0.35rem; }
 }
+
+/* ── Contact buttons share one line on a phone ──
+   At the desktop padding and 0.22em tracking the pair needed ~340px and
+   wrapped. Tighter tracking and padding rather than a smaller label, so it
+   still clears the 11px floor. */
+@media (max-width: 640px) {
+  .contact-actions {
+    flex-wrap: nowrap;
+    gap: 0.55rem;
+    justify-content: center;
+  }
+  .cbtn {
+    font-size: 0.7rem;          /* stays on the 11px floor */
+    letter-spacing: 0.1em;
+    padding: 1em 1.05em;
+    gap: 0.45rem;
+    white-space: nowrap;
+    min-height: 46px;
+  }
+  .cbtn svg { width: 15px; height: 15px; }
+}
