@@ -3368,3 +3368,29 @@ html[lang="ar"] .work-item figcaption { font-family: var(--arabic); letter-spaci
 .house-frame img { object-position: center center; }
 .house-frame::after { inset: 16px; border-color: rgba(224, 189, 143, 0.42); }
 .house-frame { border-radius: 6px; box-shadow: 0 34px 78px rgba(18, 58, 82, 0.20); }
+
+/* ── Headings in the logo's typeface ──
+   The wordmark is Aref Ruqaa; headings were Playfair in English and Amiri in
+   Arabic, so neither script's titles matched the mark. Aref Ruqaa carries both
+   — its Arabic is the same Ruqaa hand as the logo, and it ships real Latin
+   glyphs rather than falling back to a generic serif. Body copy stays on
+   Cormorant/Amiri, where Ruqaa's weight would be too heavy to read at length. */
+.page-title,
+.chapter-title,
+.residence-title,
+.pd-title,
+.portfolio-title,
+.footer-news-title,
+.house-title,
+.modal-card h3,
+.listing-name,
+.craft-title {
+  font-family: var(--calligraphy);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+/* Ruqaa sits lower on the line and needs a touch more room above descenders */
+html[dir="rtl"] .page-title,
+html[dir="rtl"] .chapter-title,
+html[dir="rtl"] .residence-title,
+html[dir="rtl"] .pd-title { line-height: 1.5; }
