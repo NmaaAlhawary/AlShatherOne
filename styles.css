@@ -2530,3 +2530,38 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
 @media (prefers-reduced-motion: reduce) {
   .nav.menu-open .nav-left a { animation: none; opacity: 1; }
 }
+
+/* ── Mobile menu panel: a considered sheet, not a bare list ── */
+@media (max-width: 900px) {
+  /* The panel was painting over the header, so only the close button showed
+     and the sheet read as empty. Keep the lockup and controls above it. */
+  .nav.menu-open .nav-brand,
+  .nav.menu-open .nav-right,
+  .nav.menu-open .nav-toggle { position: relative; z-index: 46; }
+  .nav.menu-open .nav-brand { opacity: 1; }
+
+  .nav.menu-open .nav-left {
+    justify-content: center;
+    padding-top: 5rem;      /* clear the bar so the group centres optically */
+    padding-bottom: 4.5rem;
+    gap: 0.1rem;
+  }
+
+  /* No watermark behind the links — tried the calligraphic mark here and it
+     read as clutter behind the type rather than texture. The panel carries
+     itself on spacing and the intact header. */
+
+  .nav.menu-open .nav-left a {
+    position: relative;
+    z-index: 1;                 /* above the watermark */
+    padding-block: 0.7rem;
+  }
+  /* a hairline that draws in under the current page */
+  .nav.menu-open .nav-left a::after {
+    content: ""; position: absolute; bottom: 0.35rem; left: 50%; right: 50%;
+    height: 1px; background: var(--gold);
+    transition: left 0.4s var(--ease-soft, ease), right 0.4s var(--ease-soft, ease);
+  }
+  .nav.menu-open .nav-left a.active::after,
+  .nav.menu-open .nav-left a:hover::after { left: 34%; right: 34%; }
+}
