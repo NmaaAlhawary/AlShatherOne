@@ -3395,3 +3395,26 @@ html[dir="rtl"] .craft-title {
   /* Ruqaa sits lower on the line and needs room above its descenders */
   line-height: 1.5;
 }
+
+/* ── Arabic buttons need more type to hold the same presence ──
+   The pills are inline-flex with em padding, so they hug their label. In
+   English a 0.26em tracking on a 22-character label was doing a lot of the
+   work — html[dir="rtl"] * strips that tracking (correctly: it mangles
+   Arabic's cursive joins), and the Arabic labels are shorter besides. Net
+   effect was a gold pill of 132px against English's 252px, and 10.88px type
+   that's genuinely hard to read in a script whose letters are told apart by
+   dots and small loops.
+
+   So Arabic gets larger type and wider side padding, with the vertical
+   padding trimmed to keep the pill the same height as the English one. */
+html[dir="rtl"] .btn-gold,
+html[dir="rtl"] .btn-outline-gold {
+  font-size: 0.82rem;
+  padding: 0.83em 3.2em;
+}
+/* min() so the guarantee can never overflow a narrow column — on mobile
+   these already go width:100% and that rule still wins. */
+html[dir="rtl"] .invite-actions .btn-gold,
+html[dir="rtl"] .invite-actions .btn-outline-gold {
+  min-width: min(13rem, 100%);
+}
