@@ -3227,3 +3227,35 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   .nav.menu-open .nav-left a.active::after,
   .nav.menu-open .nav-left a:hover::after { left: 34%; right: 34%; }
 }
+
+/* ═══════════════════════════════════════════════════
+   PHONE — final sweep across every page
+   Audited all seven pages at 360x740: no horizontal overflow anywhere and
+   no media wider than the viewport. What was left were controls under the
+   44px touch minimum and labels under 11px, so they're handled here in one
+   place rather than per page.
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* ── touch targets ── */
+  .nav-brand { min-height: 44px; display: flex; flex-direction: column;
+               align-items: center; justify-content: center; }
+  .footer-bottom a { padding: 0.55rem 0; min-height: 44px;
+                     display: inline-flex; align-items: center; }
+  .listing-view, .pf-more, .tour-tab, .pd-thumb, .gal-nav {
+    min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .tour-tab { padding-inline: 1rem; }
+
+  /* ── labels: nothing under 11px, and ease the tracking that makes small
+        letterspaced type hard to read at arm's length ── */
+  .listing-price { font-size: 0.82rem; letter-spacing: 0.1em; }
+  .listings-eyebrow, .pf-more, .tour-tab, .tour-hint,
+  .spec-label, .stage-num, .listing-tag, .listing-badge {
+    font-size: 0.72rem; letter-spacing: 0.16em;
+  }
+  /* .feature .feature-num carries its own size, so match the specificity */
+  .feature .feature-num { font-size: 0.72rem; letter-spacing: 0.16em; }
+  .tour-hint { letter-spacing: 0.12em; }
+  /* form labels tell you what you're typing into — never below the floor */
+  .booking-form label, .field label { font-size: 0.72rem; letter-spacing: 0.16em; }
+}
