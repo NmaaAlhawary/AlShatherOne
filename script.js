@@ -682,6 +682,11 @@ function applyLang(lang) {
   const cap = document.getElementById("pfCaption");
   const ITEMS = [
     { src: "assets/gallery-1719.jpg", en: "Residence 1719", ar: "مشروع ١٧١٩" },
+    { src: "assets/work/work-alshatherwan-render.jpg", en: "Al Shatherwan Residences", ar: "مساكن الشاذروان" },
+    { src: "assets/work/work-under-construction.jpg", en: "Under Construction — Amman", ar: "قيد الإنشاء — عمّان" },
+    { src: "assets/work/work-white-residence.jpg", en: "Completed Residence", ar: "مبنى مُنجَز" },
+    { src: "assets/work/work-stone-facade.jpg", en: "Stone Façade", ar: "واجهة حجرية" },
+    { src: "assets/work/work-render-stone.jpg", en: "Design Study", ar: "دراسة تصميمية" },
     { src: "assets/ig-finished.jpg", en: "Delivered Home — Amman", ar: "منزل مُسلَّم — عمّان" },
     { src: "assets/detail-entrance.jpg", en: "The Grand Entrance", ar: "المدخل الرئيسي" },
     { src: "assets/detail-balconies.jpg", en: "The Balconies", ar: "الشرفات" },

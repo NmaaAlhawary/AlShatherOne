@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { useLang } from "./lang.jsx";
 import { Reveal } from "./chrome.jsx";
-import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, SOCIAL, wa, asset } from "./data.js";
+import { PROPERTIES, COMMON_FEATS, LISTINGS, LIFE_IMAGES, PROCESS, FEATURES, WORK_IMAGES, SOCIAL, wa, asset } from "./data.js";
 import { GalleryRing } from "./three3d.jsx";
 
 const PageHero = ({ eyebrow, title }) => {
@@ -568,6 +568,22 @@ export function GalleryPage() {
   return (
     <>
       <PageHero eyebrow={{ en: "EXPLORE", ar: "استكشف" }} title={{ en: "The Gallery", ar: "المعرض" }} />
+      <section className="chapter chapter-work" id="work">
+        <div className="pattern-bg"></div>
+        <div className="chapter-inner wide">
+          <Reveal as="p" className="chapter-num">{L({ en: "OUR WORK", ar: "أعمالنا" })}</Reveal>
+          <Reveal as="h2" className="chapter-title">{L({ en: "Projects We've Built", ar: "مشاريع أنجزناها" })}</Reveal>
+          <Reveal className="chapter-rule gold"></Reveal>
+          <div className="work-grid">
+            {WORK_IMAGES.map((im) => (
+              <Reveal as="figure" className="work-item" key={im.src}>
+                <img loading="lazy" decoding="async" src={im.src} alt={L(im.cap)} />
+                <figcaption>{L(im.cap)}</figcaption>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
       <section className="chapter chapter-lifestyle" id="lifestyle">
         <div className="pattern-bg"></div>
         <div className="chapter-inner wide">

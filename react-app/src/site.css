@@ -3306,3 +3306,31 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   }
   .cbtn svg { width: 15px; height: 15px; }
 }
+
+/* ── Our Work grid: real project photography ── */
+.chapter-work { background: var(--sand); }
+.work-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: clamp(1.1rem, 2.4vw, 1.8rem);
+  margin-top: clamp(2.6rem, 6vh, 4rem);
+}
+.work-item { margin: 0; }
+.work-item img {
+  width: 100%; height: clamp(240px, 34vh, 330px);
+  object-fit: cover; border-radius: 12px;
+  box-shadow: 0 16px 44px rgba(18,58,82,0.10);
+  transition: transform 0.8s cubic-bezier(0.2,0.6,0.2,1);
+}
+.work-item:hover img { transform: scale(1.03); }
+.work-item figcaption {
+  font-family: var(--sans); font-weight: 300;
+  font-size: 0.66rem; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--char-soft);
+  margin-top: 0.9rem; text-align: center;
+}
+html[lang="ar"] .work-item figcaption { font-family: var(--arabic); letter-spacing: 0; font-size: 0.95rem; }
+@media (max-width: 640px) {
+  .work-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .work-item img { height: 190px; border-radius: 10px; }
+  .work-item figcaption { font-size: 0.68rem; letter-spacing: 0.14em; margin-top: 0.6rem; }
+}

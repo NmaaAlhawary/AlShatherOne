@@ -121,6 +121,14 @@ export const LIFE_IMAGES = [
   { src: asset("/assets/life-6.jpg"), cap: { en: "Quiet Details", ar: "تفاصيل هادئة" } },
 ];
 
+export const WORK_IMAGES = [
+  { src: asset("/assets/work/work-alshatherwan-render.jpg"), cap: { en: "Al Shatherwan Residences", ar: "مساكن الشاذروان" } },
+  { src: asset("/assets/work/work-white-residence.jpg"), cap: { en: "Completed Residence", ar: "مبنى مُنجَز" } },
+  { src: asset("/assets/work/work-stone-facade.jpg"), cap: { en: "Stone Fa\u00e7ade", ar: "واجهة حجرية" } },
+  { src: asset("/assets/work/work-under-construction.jpg"), cap: { en: "Under Construction", ar: "قيد الإنشاء" } },
+  { src: asset("/assets/work/work-render-stone.jpg"), cap: { en: "Design Study", ar: "دراسة تصميمية" } },
+];
+
 export const PROCESS = [
   { img: asset("/assets/ig-aerial.jpg"), n: "01", t: { en: "The Land", ar: "الأرض" }, p: { en: "We choose prime, well-connected districts and study every plot before a single stone is laid.", ar: "نختار أرقى المناطق وأكثرها حيوية، وندرس كل قطعة أرض قبل وضع أول حجر." } },
   { img: asset("/assets/ig-construction.jpg"), n: "02", t: { en: "The Structure", ar: "الهيكل" }, p: { en: "Reinforced concrete and natural stone, engineered and inspected to last for generations.", ar: "خرسانة مسلحة وحجر طبيعي، بهندسة وإشراف يدومان لأجيال." } },
