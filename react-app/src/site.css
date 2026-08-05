@@ -3136,3 +3136,59 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   html[lang="ar"] .craft-values { flex-wrap: wrap; gap: 0.5rem 1rem; letter-spacing: 0; font-size: 0.9rem; }
   html[lang="ar"] .craft-values > span { white-space: normal; }
 }
+
+/* ── Mobile menu: keep the panel anchored to the viewport ──
+   .nav.scrolled applies backdrop-filter, and a filtered element becomes the
+   containing block for its position:fixed descendants. So once the page was
+   scrolled, the panel's inset:0 resolved against the nav's 73px bar instead
+   of the viewport — cream strip on top, links spilling over the page with no
+   background behind them. Dropping the blur while the menu is open restores
+   the viewport as the containing block. The bar is opaque cream anyway. */
+.nav.menu-open {
+  /* unprefixed only: the minifier collapses the pair and keeps just the
+     -webkit- one, which leaves the standard blur (and the containing block)
+     in place. The rule this overrides is unprefixed too, so this is exact. */
+  backdrop-filter: none !important;
+}
+
+@media (max-width: 900px) {
+  /* the panel itself, a little more considered */
+  .nav.menu-open .nav-left {
+    background: var(--cream);
+    gap: 0.2rem;
+  }
+  .nav.menu-open .nav-left a {
+    font-family: var(--serif2);
+    font-size: 1.45rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--char);
+    opacity: 0;
+    animation: navLinkIn 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  }
+  /* the two visit links read as a second group */
+  .nav.menu-open .nav-left a:not(.m-only) + a.m-only {
+    margin-top: 1.5rem; padding-top: 1.8rem;
+    position: relative;
+  }
+  .nav.menu-open .nav-left a:not(.m-only) + a.m-only::before {
+    content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 46px; height: 1px; background: rgba(201,154,91,0.55);
+  }
+  .nav.menu-open .nav-left a.m-only {
+    font-size: 1.05rem; letter-spacing: 0.2em; color: var(--char-soft);
+  }
+  .nav.menu-open .nav-left a:nth-child(1) { animation-delay: 0.05s; }
+  .nav.menu-open .nav-left a:nth-child(2) { animation-delay: 0.10s; }
+  .nav.menu-open .nav-left a:nth-child(3) { animation-delay: 0.15s; }
+  .nav.menu-open .nav-left a:nth-child(4) { animation-delay: 0.20s; }
+  .nav.menu-open .nav-left a:nth-child(5) { animation-delay: 0.25s; }
+  .nav.menu-open .nav-left a:nth-child(6) { animation-delay: 0.30s; }
+  html[lang="ar"] .nav.menu-open .nav-left a { font-family: var(--arabic); letter-spacing: 0; font-size: 1.5rem; }
+  html[lang="ar"] .nav.menu-open .nav-left a.m-only { font-size: 1.15rem; }
+}
+@keyframes navLinkIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav.menu-open .nav-left a { animation: none; opacity: 1; }
+}
