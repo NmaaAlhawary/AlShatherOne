@@ -3056,3 +3056,83 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   .story-stats { align-items: center; }
   .stat { align-items: center; text-align: center; }
 }
+
+/* ═══════════════════════════════════════════════════
+   MOBILE — nav lockup, menu panel, and tightened sections
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* Equal side columns put the wordmark on the true centre line. With
+     `auto 1fr auto` the heavier right group pushed it ~31px off. */
+  .nav { grid-template-columns: 1fr auto 1fr; }
+  /* No justify-self here: .nav-left becomes position:fixed when the menu
+     opens, and the nav's backdrop-filter makes it the containing block — so
+     grid alignment collapsed the full-screen panel to its content width. */
+
+  /* The menu panel sat at z-index -1, so it rendered behind the page and the
+     links showed through the content underneath. Above the page, below the bar. */
+  .nav.menu-open .nav-left { z-index: 45; }
+  /* `.m-only` forced display:block with !important, which beat the centring
+     rule — those two links alone sat left-aligned and full width. */
+  .nav.menu-open .nav-left .m-only {
+    display: flex !important;
+    align-items: center; justify-content: center;
+    width: 100%; min-height: 52px;
+  }
+}
+
+@media (max-width: 640px) {
+  /* the calligraphic wordmark dominated the bar at 1.55rem */
+  .nav-brand-ar { font-size: 1.15rem; line-height: 1.25; }
+  .nav-brand-en { font-size: 0.5rem; letter-spacing: 0.28em; text-indent: 0.28em; }
+  .nav { padding-inline: 0.9rem; }
+  .nav-side { gap: 0.5rem; }
+
+  /* the three values wrapped onto two lines with a stranded separator */
+  .work-band {
+    gap: 0.55rem;
+    padding-inline: 0.8rem;
+    flex-wrap: nowrap;
+  }
+  .work-band a { font-size: 0.82rem; white-space: nowrap; }
+  .work-divider { height: 20px; }
+
+  /* residence features: tighter rhythm, the copy was drifting apart */
+  .residence-features { gap: 1.9rem; }
+  .feature h3 { font-size: 1.15rem; margin-bottom: 0.4rem; }
+  .feature p { font-size: 0.95rem; line-height: 1.65; }
+  .feature .feature-num { margin-bottom: 0.7rem; }
+}
+
+/* Property page on a phone: the title ran to three lines and the spec tiles
+   and buttons were carrying desktop proportions. */
+@media (max-width: 640px) {
+  .pd-wrap { padding-top: clamp(5.5rem, 12vh, 7rem); }
+  .pd-info { padding: 1.6rem 1.3rem; gap: 0.9rem; }
+  .pd-title { font-size: clamp(1.6rem, 7.2vw, 2rem); line-height: 1.18; }
+  .pd-loc { font-size: 0.95rem; }
+  .pd-price { font-size: 1.25rem; }
+  .pd-specs { gap: 0.6rem; }
+  .pd-spec { padding: 0.95rem 0.4rem; }
+  .pd-spec strong { font-size: 1.15rem; }
+  .spec-label { font-size: 0.62rem; letter-spacing: 0.16em; }
+  .pd-enquire, .pd-book, .pd-tour { padding: 1em 0.9em; }
+  .pd-section { padding-top: 1.8rem; margin-top: 2rem; }
+  .pd-h { font-size: 1.3rem; }
+  .pd-desc { font-size: 1.02rem; line-height: 1.75; }
+}
+
+/* The three values wrapped onto two lines with a stranded separator. Tighter
+   tracking rather than a smaller size, so it fits one line and still clears
+   the 11px floor. Arabic appends a translation to each, so it keeps wrapping. */
+@media (max-width: 640px) {
+  .craft-values {
+    flex-wrap: nowrap;
+    gap: 0.45rem;
+    padding-inline: 0.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+  .craft-values > span { white-space: nowrap; }
+  html[lang="ar"] .craft-values { flex-wrap: wrap; gap: 0.5rem 1rem; letter-spacing: 0; font-size: 0.9rem; }
+  html[lang="ar"] .craft-values > span { white-space: normal; }
+}
