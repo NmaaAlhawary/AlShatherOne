@@ -196,7 +196,7 @@ function BuildHero() {
   const STAGES = [
     { k: { en: "THE FOUNDATION", ar: "الأساس" }, t: { en: "Columns, footings, bedrock.", ar: "أعمدة وقواعد وصخر." } },
     { k: { en: "FLOOR BY FLOOR", ar: "طابقاً بطابق" }, t: { en: "Slabs, walls, then light.", ar: "بلاطات وجدران ثم ضوء." } },
-    { k: { en: "LAYER BY LAYER", ar: "طبقة بطبقة" }, t: { en: "See what goes into every home.", ar: "شاهد ما يدخل في كل بيت." } },
+    { k: { en: "LAYER BY LAYER", ar: "طبقة بطبقة" }, t: { en: "See what goes into every home.", ar: "شاهد مما يُبنى كل بيت." } },
   ];
 
   return (
@@ -348,7 +348,7 @@ export function About() {
         <div className="chapter-inner wide">
           <div className="house-split">
             <Reveal className="house-media">
-              <div className="house-frame"><img src={asset("/assets/building-1719-hero.jpg")} alt="Al Shatherwan residence" /></div>
+              <div className="house-frame"><img src={asset("/assets/building-1719-portrait.jpg")} alt="Al Shatherwan residence at night" /></div>
             </Reveal>
             <div className="house-copy">
               <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</Reveal>
@@ -388,11 +388,11 @@ export function About() {
           <div className="vm-grid">
             <Reveal className="vm-card" delay={60}>
               <p className="vm-label">{L({ en: "OUR VISION", ar: "رؤيتنا" })}</p>
-              <p className="vm-text">{L({ en: "To be one of Jordan's leading real estate developers, trusted for quality, innovation, and long-term value.", ar: "أن نكون من أبرز شركات التطوير العقاري في الأردن، موثوقين بالجودة والابتكار والقيمة طويلة الأمد." })}</p>
+              <p className="vm-text">{L({ en: "To be one of Jordan's leading real estate developers, trusted for quality, innovation, and long-term value.", ar: "أن نكون في مقدمة شركات التطوير العقاري في الأردن، نُعرَف بجودتنا وابتكارنا وبقيمةٍ تدوم." })}</p>
             </Reveal>
             <Reveal className="vm-card" delay={180}>
               <p className="vm-label">{L({ en: "OUR MISSION", ar: "رسالتنا" })}</p>
-              <p className="vm-text">{L({ en: "To develop modern, reliable, and comfortable homes that meet the needs of every family.", ar: "تطوير منازل عصرية موثوقة ومريحة تلبي احتياجات كل عائلة." })}</p>
+              <p className="vm-text">{L({ en: "To develop modern, reliable, and comfortable homes that meet the needs of every family.", ar: "أن نبني منازل عصرية تجمع الراحة والثقة، وتناسب كل عائلة." })}</p>
             </Reveal>
           </div>
           <Reveal as="p" className="values-line" delay={120}>{L({ en: "We leave our mark on real estate development — and we believe in honesty, trust, and integrity.", ar: "نضع بصمتنا في عالم التطوير العقاري — ونؤمن بالصدق والثقة والنزاهة." })}</Reveal>
@@ -449,7 +449,7 @@ export function About() {
           <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER V", ar: "الفصل الخامس" })}</Reveal>
           <Reveal as="h2" className="chapter-title" delay={70}>{L({ en: "How We Build", ar: "كيف نبني" })}</Reveal>
           <Reveal className="chapter-rule" delay={130}></Reveal>
-          <Reveal as="p" className="process-lead" delay={180}>{L({ en: "From the first survey to the final key — every Shatherwan home follows the same uncompromising path.", ar: "من أول مسح للأرض حتى تسليم المفتاح — كل منزل من الشاذروان يتبع النهج ذاته دون تنازل." })}</Reveal>
+          <Reveal as="p" className="process-lead" delay={180}>{L({ en: "From the first survey to the final key — every Shatherwan home follows the same uncompromising path.", ar: "من أول معاينة للأرض حتى تسليم المفتاح — كل منزل من الشاذروان يمر بالنهج ذاته دون تنازل." })}</Reveal>
           <div className="process-grid">
             {PROCESS.map((s, i) => (
               <Reveal key={s.n} className="process-step" delay={i * 110}>
@@ -525,7 +525,7 @@ export function Projects() {
           <Reveal as="p" className="listings-eyebrow">{L({ en: "AVAILABLE NOW", ar: "متوفر الآن" })}</Reveal>
           <Reveal as="h2" className="listings-h">{L({ en: "Homes for Sale", ar: "شقق للبيع" })}</Reveal>
           <Reveal className="chapter-rule"></Reveal>
-          <Reveal as="p" className="listings-lead">{L({ en: "Move-in-ready apartments in Residence 1719 — reserve yours before they're gone.", ar: "شقق جاهزة للسكن في مشروع ١٧١٩ — احجز شقتك قبل نفادها." })}</Reveal>
+          <Reveal as="p" className="listings-lead">{L({ en: "Move-in-ready apartments in Residence 1719 — reserve yours before they're gone.", ar: "شقق جاهزة للسكن في مشروع ١٧١٩ — احجز شقتك قبل أن تُحجَز." })}</Reveal>
           <div className="listings-grid">
             {LISTINGS.map((u) => {
               const p = PROPERTIES[u.id];
@@ -567,13 +567,10 @@ export function GalleryPage() {
   const { L } = useLang();
   return (
     <>
-      <PageHero eyebrow={{ en: "EXPLORE", ar: "استكشف" }} title={{ en: "The Gallery", ar: "المعرض" }} />
+      <PageHero eyebrow={{ en: "OUR WORK", ar: "أعمالنا" }} title={{ en: "Projects We've Built", ar: "مشاريع أنجزناها" }} />
       <section className="chapter chapter-work" id="work">
         <div className="pattern-bg"></div>
         <div className="chapter-inner wide">
-          <Reveal as="p" className="chapter-num">{L({ en: "OUR WORK", ar: "أعمالنا" })}</Reveal>
-          <Reveal as="h2" className="chapter-title">{L({ en: "Projects We've Built", ar: "مشاريع أنجزناها" })}</Reveal>
-          <Reveal className="chapter-rule gold"></Reveal>
           <div className="work-grid">
             {WORK_IMAGES.map((im) => (
               <Reveal as="figure" className="work-item" key={im.src}>
@@ -590,7 +587,7 @@ export function GalleryPage() {
           <Reveal as="p" className="chapter-num">{L({ en: "CHAPTER I", ar: "الفصل الأول" })}</Reveal>
           <Reveal as="h2" className="chapter-title">{L({ en: "The Lifestyle", ar: "أسلوب الحياة" })}</Reveal>
           <Reveal className="chapter-rule"></Reveal>
-          <Reveal as="p" className="lifestyle-lead">{L({ en: "Interiors designed to breathe — warm, calm, and made for everyday beauty.", ar: "تصاميم داخلية تتنفس — دافئة، هادئة، وصُنعت لجمال الحياة اليومية." })}</Reveal>
+          <Reveal as="p" className="lifestyle-lead">{L({ en: "Interiors designed to breathe — warm, calm, and made for everyday beauty.", ar: "مساحات داخلية تمنحك متّسعاً للراحة — دافئة، هادئة، ومصمّمة لتفاصيل يومك." })}</Reveal>
           <div className="life-grid">
             {LIFE_IMAGES.map((im) => (
               <Reveal as="figure" className="life-item" key={im.src}>
@@ -606,7 +603,7 @@ export function GalleryPage() {
           <Reveal as="p" className="chapter-num light-num">{L({ en: "CHAPTER II", ar: "الفصل الثاني" })}</Reveal>
           <Reveal as="h2" className="chapter-title on-dark">{L({ en: "The Gallery", ar: "المعرض" })}</Reveal>
           <Reveal className="chapter-rule gold"></Reveal>
-          <Reveal as="p" className="gallery-lead">{L({ en: "Drag to explore our world in three dimensions — from first stone to final key.", ar: "اسحب لتستكشف عالمنا بثلاثة أبعاد — من أول حجر حتى تسليم المفتاح." })}</Reveal>
+          <Reveal as="p" className="gallery-lead">{L({ en: "Drag to explore our world in three dimensions — from first stone to final key.", ar: "اسحب لتستكشف مشروعنا بتقنية ثلاثية الأبعاد — من أول حجر حتى تسليم المفتاح." })}</Reveal>
           <GalleryRing />
           <Reveal as="p" className="gallery-hint">{L({ en: "— DRAG OR SWIPE TO ROTATE —", ar: "— اسحب أو مرر للاستكشاف —" })}</Reveal>
         </div>

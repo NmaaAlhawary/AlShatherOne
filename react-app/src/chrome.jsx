@@ -101,7 +101,7 @@ export function Footer() {
       <div className="footer-top">
         <div className="footer-news">
           <h3 className="footer-news-title">{L({ en: "Stay in Touch", ar: "ابقَ على تواصل" })}</h3>
-          <p className="footer-news-sub">{L({ en: "Be the first to hear about new residences and private viewings.", ar: "كن أول من يعرف عن مشاريعنا الجديدة ومواعيد المعاينات الخاصة." })}</p>
+          <p className="footer-news-sub">{L({ en: "Be the first to hear about new residences and private viewings.", ar: "كن أول من يصله خبر مشاريعنا الجديدة ومواعيد المعاينات الخاصة." })}</p>
           <form className="news-form" onSubmit={submit}>
             {/* clearing `done` on edit stops a stale confirmation sitting under an empty field */}
             <input
@@ -183,7 +183,7 @@ export function ChatWidget() {
     if (/(service|services|offer|do you do|خدمات|خدماتكم|تقدمون|ماذا تعملون)/.test(t))
       return A(
         "We're a full developer: we build residential projects on our own land, sell apartments direct from the developer with no broker, handle construction and finishing ourselves, arrange private viewings, and stay reachable after handover.",
-        "نحن مطوّر عقاري متكامل: نطوّر مشاريعنا السكنية على أرضنا، ونبيع الشقق مباشرة من المالك بلا وسيط، وننفّذ البناء والتشطيب بأنفسنا، ونرتّب معاينات خاصة، ونبقى على تواصل معك بعد التسليم.",
+        "نحن مطوّر عقاري متكامل: نبني مشاريعنا السكنية على أرضنا، ونبيع الشقق منّا إليك مباشرة بلا وسيط، وننفّذ البناء والتشطيب بأنفسنا، ونرتّب لك معاينة خاصة، ونبقى على تواصل معك بعد التسليم.",
         { label: ar ? "كيف نبني" : "How we build", to: "/about" });
     if (/(payment|installment|instalment|finance|mortgage|bank|دفع|تقسيط|أقساط|تمويل|بنك)/.test(t))
       return A(
@@ -203,7 +203,7 @@ export function ChatWidget() {
     if (/(deliver|handover|ready|when|timeline|complete|تسليم|جاهز|متى|الإنجاز)/.test(t))
       return A(
         "We build in clear stages — footings and structure, then walls and finishing, then a final walkthrough before the keys change hands. For the handover date on a specific apartment, message us on WhatsApp.",
-        "نبني على مراحل واضحة: الأساسات والهيكل، ثم الجدران والتشطيب، ثم الفحص النهائي قبل تسليم المفتاح. لموعد التسليم لشقة محددة راسلنا على واتساب.",
+        "نبني على مراحل واضحة: الأساسات والهيكل، ثم الجدران والتشطيب، ثم الفحص النهائي قبل تسليم المفتاح. ولمعرفة موعد تسليم شقة بعينها، راسلنا على واتساب.",
         { label: "WhatsApp", href: SOCIAL.whatsapp });
     if (/(3d|tour|virtual|walk|ثلاثي|جولة|افتراضي|تجول)/.test(t))
       return A(
@@ -226,7 +226,7 @@ export function ChatWidget() {
         "تفاصيل المواقف والمصعد والخدمات تختلف حسب الشقة والطابق. راسلنا على واتساب وسنرسل لك التفاصيل الدقيقة.",
         { label: "WhatsApp", href: SOCIAL.whatsapp });
     if (/(available|homes|apartment|شقق|متوفر|مشاريع)/.test(t))
-      return A("Currently featuring Residence 1719 — spacious apartments in a prime Amman district.", "حالياً: مشروع الشاذروان ١٧١٩ — شقق واسعة في موقع مميز بعمّان.", { label: ar ? "شاهد المشروع" : "See the residence", to: "/projects" });
+      return A("Currently featuring Residence 1719 — spacious apartments in a prime Amman district.", "حالياً: مشروع الشاذروان ١٧١٩ — شقق واسعة في موقع مميّز بعمّان.", { label: ar ? "شاهد المشروع" : "See the residence", to: "/projects" });
     if (/(where|location|address|directions|map|أين|موقع|عنوان|خريطة)/.test(t))
       return A(
         `We build in ${LOCATION.city.en}. Our current project, ${LOCATION.project.en}, is in one of the city's most desirable districts — walking distance to schools, shops, and daily essentials.\nWe send the exact location pin on WhatsApp once a viewing is booked, so you arrive at the door, not the street.`,

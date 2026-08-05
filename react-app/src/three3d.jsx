@@ -508,7 +508,7 @@ const ROOMS = [
     id: "bedroom2", x: 2.8, z: -2.3, w: 3.4, d: 2.8,
     t: { en: "Second Bedroom", ar: "غرفة النوم الثانية" },
     area: "16 m²",
-    p: { en: "A full double room on the quiet side of the plan, away from the living space.", ar: "غرفة مزدوجة كاملة في الجهة الهادئة من المخطط، بعيداً عن مساحة المعيشة." },
+    p: { en: "A full double room on the quiet side of the plan, away from the living space.", ar: "غرفة نوم واسعة في الجهة الهادئة من الشقة، بعيداً عن مساحة المعيشة." },
   },
   {
     id: "bath", x: 5.2, z: 3.1, w: 2.3, d: 2.2,

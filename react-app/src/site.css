@@ -3347,3 +3347,24 @@ html[lang="ar"] .work-item figcaption { font-family: var(--arabic); letter-spaci
   .work-item img { height: 190px; border-radius: 10px; }
   .work-item figcaption { font-size: 0.68rem; letter-spacing: 0.14em; margin-top: 0.6rem; }
 }
+
+/* ── Gallery page rhythm ──
+   .page-hero and .chapter-work were both --sand, so the hero ran straight
+   into the work section as one tall empty band. Alternating the bands and
+   adding a hairline gives each section an edge; the first section after a
+   page hero also loses some top padding, which was compounding the gap. */
+.chapter-work { background: var(--cream); border-top: 1px solid rgba(18,58,82,0.07); }
+.chapter-lifestyle { background: var(--sand); border-top: 1px solid rgba(18,58,82,0.07); }
+.page-hero + .chapter .chapter-inner { padding-top: clamp(3.2rem, 7vh, 5rem); }
+.page-hero { padding-bottom: clamp(2.6rem, 6vh, 3.6rem); }
+
+/* section eyebrow sits closer to its title */
+.chapter-work .chapter-num, .chapter-lifestyle .chapter-num { margin-bottom: 0.9rem; }
+
+/* ── About: the portrait frame ──
+   Was showing the landscape hero crop in a 4:5 box, so cover threw away ~62%
+   of the width and cut the building oddly. building-1719-portrait.jpg is cut
+   to 4:5 at source, so the frame crops nothing. Inner rule eased in a little. */
+.house-frame img { object-position: center center; }
+.house-frame::after { inset: 16px; border-color: rgba(224, 189, 143, 0.42); }
+.house-frame { border-radius: 6px; box-shadow: 0 34px 78px rgba(18, 58, 82, 0.20); }

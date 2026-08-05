@@ -136,13 +136,13 @@ export const WORK_IMAGES = [
 
 export const PROCESS = [
   { img: asset("/assets/ig-aerial.jpg"), n: "01", t: { en: "The Land", ar: "الأرض" }, p: { en: "We choose prime, well-connected districts and study every plot before a single stone is laid.", ar: "نختار أرقى المناطق وأكثرها حيوية، وندرس كل قطعة أرض قبل وضع أول حجر." } },
-  { img: asset("/assets/ig-construction.jpg"), n: "02", t: { en: "The Structure", ar: "الهيكل" }, p: { en: "Reinforced concrete and natural stone, engineered and inspected to last for generations.", ar: "خرسانة مسلحة وحجر طبيعي، بهندسة وإشراف يدومان لأجيال." } },
+  { img: asset("/assets/ig-construction.jpg"), n: "02", t: { en: "The Structure", ar: "الهيكل" }, p: { en: "Reinforced concrete and natural stone, engineered and inspected to last for generations.", ar: "خرسانة مسلّحة وحجر طبيعي، بهندسة وإشراف يضمنان متانة تدوم لأجيال." } },
   { img: asset("/assets/ig-interior.jpg"), n: "03", t: { en: "The Finishing", ar: "التشطيب" }, p: { en: "Light-filled interiors completed with premium materials and painstaking detail.", ar: "مساحات مضيئة تُنجز بمواد فاخرة وعناية بأدق التفاصيل." } },
   { img: asset("/assets/ig-finished.jpg"), n: "04", t: { en: "The Delivery", ar: "التسليم" }, p: { en: "A completed home, handed over ready for life — on time and exactly as promised.", ar: "منزل مكتمل يُسلَّم جاهزاً للحياة — في موعده وكما وعدنا تماماً." } },
 ];
 
 export const FEATURES = [
-  { n: "01", t: { en: "Spacious Layouts", ar: "مساحات رحبة" }, p: { en: "Expansive apartments planned for modern family living, with light-filled rooms and open flow.", ar: "شقق واسعة مخططة لحياة العائلة العصرية، بغرف مضيئة وتوزيع مفتوح." } },
+  { n: "01", t: { en: "Spacious Layouts", ar: "مساحات رحبة" }, p: { en: "Expansive apartments planned for modern family living, with light-filled rooms and open flow.", ar: "شقق واسعة مصمّمة لحياة العائلة اليوم، بغرف مضيئة وتوزيع مفتوح." } },
   { n: "02", t: { en: "Premium Façades", ar: "واجهات فاخرة" }, p: { en: "Natural stone elevations with classical detailing and warm architectural lighting.", ar: "واجهات من الحجر الطبيعي بتفاصيل كلاسيكية وإضاءة معمارية دافئة." } },
   { n: "03", t: { en: "Private Balconies", ar: "شرفات خاصة" }, p: { en: "Deep terraces off every principal room, framed by landscaped greenery.", ar: "شرفات عميقة تطل من كل غرفة رئيسية، تحيط بها مساحات خضراء منسقة." } },
   { n: "04", t: { en: "Prime Location", ar: "موقع مميز" }, p: { en: "Set in one of Amman's most desirable districts, minutes from everything that matters.", ar: "في واحدة من أرقى مناطق عمّان، على دقائق من كل ما يهمك." } },

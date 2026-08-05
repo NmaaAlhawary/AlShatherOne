@@ -2685,3 +2685,22 @@ html[lang="ar"] .work-item figcaption { font-family: var(--arabic); letter-spaci
   .work-item img { height: 190px; border-radius: 10px; }
   .work-item figcaption { font-size: 0.68rem; letter-spacing: 0.14em; margin-top: 0.6rem; }
 }
+
+/* ── Gallery page rhythm ──
+   .page-hero and .chapter-work were both --sand, so the hero ran straight
+   into the work section as one tall empty band. Alternating the bands and
+   adding a hairline gives each section an edge; the first section after a
+   page hero also loses some top padding, which was compounding the gap. */
+.chapter-work { background: var(--cream); border-top: 1px solid rgba(18,58,82,0.07); }
+.chapter-lifestyle { background: var(--sand); border-top: 1px solid rgba(18,58,82,0.07); }
+.page-hero + .chapter .chapter-inner { padding-top: clamp(3.2rem, 7vh, 5rem); }
+.page-hero { padding-bottom: clamp(2.6rem, 6vh, 3.6rem); }
+
+/* section eyebrow sits closer to its title */
+.chapter-work .chapter-num, .chapter-lifestyle .chapter-num { margin-bottom: 0.9rem; }
+
+/* ── Language swap, not language stacking ──
+   html[lang="en"] .ar hid the Arabic in English, but Arabic mode showed both,
+   so an Arabic reader got "QUALITY — الجودة". Each language now has its own
+   hook and only one is shown. */
+html[lang="ar"] .en { display: none; }
