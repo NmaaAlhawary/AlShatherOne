@@ -600,9 +600,6 @@ export function GalleryPage() {
       </section>
       <section className="chapter chapter-gallery" id="gallery">
         <div className="chapter-inner wide">
-          <Reveal as="p" className="chapter-num light-num">{L({ en: "CHAPTER II", ar: "الفصل الثاني" })}</Reveal>
-          <Reveal as="h2" className="chapter-title on-dark">{L({ en: "The Gallery", ar: "المعرض" })}</Reveal>
-          <Reveal className="chapter-rule gold"></Reveal>
           <Reveal as="p" className="gallery-lead">{L({ en: "Drag to explore our world in three dimensions — from first stone to final key.", ar: "اسحب لتستكشف مشروعنا بتقنية ثلاثية الأبعاد — من أول حجر حتى تسليم المفتاح." })}</Reveal>
           <GalleryRing />
           <Reveal as="p" className="gallery-hint">{L({ en: "— DRAG OR SWIPE TO ROTATE —", ar: "— اسحب أو مرر للاستكشاف —" })}</Reveal>
