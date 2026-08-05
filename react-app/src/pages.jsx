@@ -196,7 +196,7 @@ function BuildHero() {
   const STAGES = [
     { k: { en: "THE FOUNDATION", ar: "الأساس" }, t: { en: "Columns, footings, bedrock.", ar: "أعمدة وقواعد وصخر." } },
     { k: { en: "FLOOR BY FLOOR", ar: "طابقاً بطابق" }, t: { en: "Slabs, walls, then light.", ar: "بلاطات وجدران ثم ضوء." } },
-    { k: { en: "LAYER BY LAYER", ar: "طبقة بطبقة" }, t: { en: "See what goes into every home.", ar: "شاهد مما يُبنى كل بيت." } },
+    { k: { en: "LAYER BY LAYER", ar: "طبقة بطبقة" }, t: { en: "See what goes into every home.", ar: "شاهد ماذا يوجد داخل كل بيت." } },
   ];
 
   return (
