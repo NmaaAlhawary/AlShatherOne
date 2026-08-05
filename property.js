@@ -2,7 +2,7 @@
 
 const PROPERTIES = {
   garden: {
-    imgs: ["assets/gallery-1719.jpg", "assets/detail-entrance.jpg", "assets/life-1.jpg", "assets/ig-interior.jpg"],
+    imgs: ["assets/gallery-1719.jpg", "assets/detail-entrance.jpg", "assets/life-1.jpg", "assets/hero-clean.jpg"],
     title: { en: "Garden Apartment — Ground Floor", ar: "شقة أرضية مع حديقة" },
     beds: 4, baths: 4, area: "235 m²",
     floor: { en: "Ground", ar: "أرضي" },
@@ -17,7 +17,7 @@ const PROPERTIES = {
     ],
   },
   first: {
-    imgs: ["assets/detail-balconies.jpg", "assets/gallery-1719.jpg", "assets/life-2.jpg", "assets/ig-interior.jpg"],
+    imgs: ["assets/detail-balconies.jpg", "assets/gallery-1719.jpg", "assets/life-1.jpg", "assets/building-1719-hero.jpg"],
     title: { en: "First-Floor Apartment", ar: "شقة الطابق الأول" },
     beds: 3, baths: 3, area: "185 m²",
     floor: { en: "First", ar: "الأول" },
@@ -32,7 +32,7 @@ const PROPERTIES = {
     ],
   },
   second: {
-    imgs: ["assets/ig-interior.jpg", "assets/gallery-1719.jpg", "assets/life-3.jpg", "assets/detail-balconies.jpg"],
+    imgs: ["assets/life-4.jpg", "assets/gallery-1719.jpg", "assets/life-1.jpg", "assets/detail-balconies.jpg"],
     title: { en: "Second-Floor Apartment", ar: "شقة الطابق الثاني" },
     beds: 3, baths: 3, area: "185 m²",
     floor: { en: "Second", ar: "الثاني" },
@@ -47,7 +47,7 @@ const PROPERTIES = {
     ],
   },
   roof: {
-    imgs: ["assets/detail-entrance.jpg", "assets/gallery-1719.jpg", "assets/life-4.jpg", "assets/ig-finished.jpg"],
+    imgs: ["assets/detail-entrance.jpg", "assets/gallery-1719.jpg", "assets/life-4.jpg", "assets/building-1719-hero.jpg"],
     title: { en: "Rooftop Apartment & Terrace", ar: "شقة الروف مع تراس" },
     beds: 4, baths: 4, area: "210 m²",
     floor: { en: "Rooftop", ar: "الروف" },

@@ -15,17 +15,25 @@ function init() {
     { src: "assets/ig-construction.jpg", caption: { en: "Built From the Ground Up", ar: "من الأساس إلى القمة" } },
     { src: "assets/ig-street.jpg", caption: { en: "Amman, Jordan", ar: "عمّان، الأردن" } },
     { src: "assets/ig-keys.jpg", caption: { en: "Every Home, a New Beginning", ar: "كل منزل بداية جديدة" } },
+    { src: "assets/work/work-alshatherwan-render.jpg", caption: { en: "Al Shatherwan Residences", ar: "مساكن الشاذروان" } },
+    { src: "assets/work/work-white-residence.jpg", caption: { en: "Completed Residence", ar: "مبنى مُنجَز" } },
+    { src: "assets/work/work-stone-facade.jpg", caption: { en: "Stone Fa\u00e7ade", ar: "واجهة حجرية" } },
+    { src: "assets/work/work-under-construction.jpg", caption: { en: "Under Construction", ar: "قيد الإنشاء" } },
+    { src: "assets/work/work-render-stone.jpg", caption: { en: "Design Study", ar: "دراسة تصميمية" } },
   ];
   const N = IMAGES.length;
-  const RADIUS = 4.1;
+  // Radius follows the count: at a fixed 4.1 the panels (2.1 wide) overlapped
+  // once the ring grew past ~8. 0.62 leaves a comfortable gap between them.
+  const RADIUS = Math.max(4.1, (N * 2.1) / (Math.PI * 2 * 0.62));
   const NAVY = new THREE.Color(0x071e2c);
 
   const scene = new THREE.Scene();
   scene.background = NAVY;
-  scene.fog = new THREE.Fog(NAVY, 7, 16);
+  scene.fog = new THREE.Fog(NAVY, RADIUS + 3, RADIUS * 2.6 + 6);
 
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 50);
-  camera.position.set(0, 0.4, 10.5);
+  const CAM_Z = RADIUS + 6.4;
+  camera.position.set(0, 0.4, CAM_Z);
   camera.lookAt(0, -0.15, 0);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
@@ -128,7 +136,7 @@ function init() {
     const w = stage.clientWidth, h = stage.clientHeight;
     renderer.setSize(w, h);
     camera.aspect = w / h;
-    camera.position.z = camera.aspect < 1 ? 14 : 10.5;
+    camera.position.z = camera.aspect < 1 ? CAM_Z + 3.5 : CAM_Z;
     camera.updateProjectionMatrix();
   }
   resize();

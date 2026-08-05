@@ -13,7 +13,10 @@ const GOLD = "#c99a5b";
    (the 3D equivalent of object-fit: cover) so nothing bulges out of the
    ring. The front card is scaled up and lit; the rest recede. */
 
-const PANEL_W = 2.12, PANEL_H = 2.78, RING_R = 4.5;
+const PANEL_W = 2.12, PANEL_H = 2.78;
+// Radius follows the count: at a fixed 4.5 the panels overlapped once the
+// ring grew past ~8. 0.62 leaves a comfortable gap between them.
+const RING_R = Math.max(4.5, (GALLERY_IMAGES.length * PANEL_W) / (Math.PI * 2 * 0.62));
 
 /** Crop a texture to a target aspect ratio, centred — like object-fit: cover. */
 function coverFit(tex, targetAspect) {
@@ -178,7 +181,7 @@ export function GalleryRing() {
           if (e.key === "ArrowLeft") { shift(-1); e.preventDefault(); }
         }}
       >
-        <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: true }} camera={{ position: [0, 0.45, 11.4], fov: 34 }}>
+        <Canvas dpr={[1, 2]} gl={{ alpha: true, antialias: true }} camera={{ position: [0, 0.45, RING_R + 6.9], fov: 34 }}>
           <FrameHook cb={onFrame} />
           <RingPanels ctrl={ctrl} />
         </Canvas>

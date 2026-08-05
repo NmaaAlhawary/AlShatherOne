@@ -3309,10 +3309,23 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
 
 /* ── Our Work grid: real project photography ── */
 .chapter-work { background: var(--sand); }
+/* Five items in an auto-fit grid left an orphan on its own row. A 6-column
+   editorial split takes two wide above three narrower — no stranded card. */
 .work-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  display: grid; grid-template-columns: repeat(6, 1fr);
   gap: clamp(1.1rem, 2.4vw, 1.8rem);
   margin-top: clamp(2.6rem, 6vh, 4rem);
+}
+.work-item:nth-child(1), .work-item:nth-child(2) { grid-column: span 3; }
+.work-item:nth-child(n+3) { grid-column: span 2; }
+.work-item:nth-child(1) img, .work-item:nth-child(2) img { height: clamp(300px, 44vh, 430px); }
+.work-item:nth-child(n+3) img { height: clamp(230px, 30vh, 300px); }
+@media (max-width: 900px) {
+  .work-grid { grid-template-columns: repeat(2, 1fr); }
+  .work-item:nth-child(n) { grid-column: span 1; }
+  .work-item:nth-child(1) { grid-column: span 2; }
+  .work-item:nth-child(1) img { height: clamp(240px, 34vh, 320px); }
+  .work-item:nth-child(n+2) img { height: 210px; }
 }
 .work-item { margin: 0; }
 .work-item img {

@@ -24,7 +24,7 @@ export const mailto = (subject, body) =>
 
 export const PROPERTIES = {
   garden: {
-    imgs: [asset("/assets/gallery-1719.jpg"), asset("/assets/detail-entrance.jpg"), asset("/assets/life-1.jpg"), asset("/assets/ig-interior.jpg")],
+    imgs: [asset("/assets/gallery-1719.jpg"), asset("/assets/detail-entrance.jpg"), asset("/assets/life-1.jpg"), asset("/assets/hero-clean.jpg")],
     title: { en: "Garden Apartment — Ground Floor", ar: "شقة أرضية مع حديقة" },
     beds: 4, baths: 4, area: "235 m²",
     floor: { en: "Ground", ar: "أرضي" },
@@ -39,7 +39,7 @@ export const PROPERTIES = {
     ],
   },
   first: {
-    imgs: [asset("/assets/detail-balconies.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-2.jpg"), asset("/assets/ig-interior.jpg")],
+    imgs: [asset("/assets/detail-balconies.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-1.jpg"), asset("/assets/building-1719-hero.jpg")],
     title: { en: "First-Floor Apartment", ar: "شقة الطابق الأول" },
     beds: 3, baths: 3, area: "185 m²",
     floor: { en: "First", ar: "الأول" },
@@ -54,7 +54,7 @@ export const PROPERTIES = {
     ],
   },
   second: {
-    imgs: [asset("/assets/ig-interior.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-3.jpg"), asset("/assets/detail-balconies.jpg")],
+    imgs: [asset("/assets/life-4.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-1.jpg"), asset("/assets/detail-balconies.jpg")],
     title: { en: "Second-Floor Apartment", ar: "شقة الطابق الثاني" },
     beds: 3, baths: 3, area: "185 m²",
     floor: { en: "Second", ar: "الثاني" },
@@ -69,7 +69,7 @@ export const PROPERTIES = {
     ],
   },
   roof: {
-    imgs: [asset("/assets/detail-entrance.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-4.jpg"), asset("/assets/ig-finished.jpg")],
+    imgs: [asset("/assets/detail-entrance.jpg"), asset("/assets/gallery-1719.jpg"), asset("/assets/life-4.jpg"), asset("/assets/building-1719-hero.jpg")],
     title: { en: "Rooftop Apartment & Terrace", ar: "شقة الروف مع تراس" },
     beds: 4, baths: 4, area: "210 m²",
     floor: { en: "Rooftop", ar: "الروف" },
@@ -110,6 +110,11 @@ export const GALLERY_IMAGES = [
   { src: asset("/assets/ig-construction.jpg"), caption: { en: "Built From the Ground Up", ar: "من الأساس إلى القمة" } },
   { src: asset("/assets/ig-street.jpg"), caption: { en: "Amman, Jordan", ar: "عمّان، الأردن" } },
   { src: asset("/assets/ig-keys.jpg"), caption: { en: "Every Home, a New Beginning", ar: "كل منزل بداية جديدة" } },
+  { src: asset("/assets/work/work-alshatherwan-render.jpg"), caption: { en: "Al Shatherwan Residences", ar: "مساكن الشاذروان" } },
+  { src: asset("/assets/work/work-white-residence.jpg"), caption: { en: "Completed Residence", ar: "مبنى مُنجَز" } },
+  { src: asset("/assets/work/work-stone-facade.jpg"), caption: { en: "Stone Fa\u00e7ade", ar: "واجهة حجرية" } },
+  { src: asset("/assets/work/work-under-construction.jpg"), caption: { en: "Under Construction", ar: "قيد الإنشاء" } },
+  { src: asset("/assets/work/work-render-stone.jpg"), caption: { en: "Design Study", ar: "دراسة تصميمية" } },
 ];
 
 export const LIFE_IMAGES = [
