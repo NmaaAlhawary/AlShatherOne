@@ -155,6 +155,8 @@ const WHATSAPP_NUMBER = "962790489291"; // from the company's Facebook page
   const CHIPS = [
     { en: "Available homes", ar: "الشقق المتوفرة", q: "available homes" },
     { en: "Book a viewing", ar: "احجز معاينة", q: "book a viewing" },
+    { en: "Our services", ar: "خدماتنا", q: "services" },
+    { en: "Payment", ar: "طريقة الدفع", q: "payment" },
     { en: "Location", ar: "الموقع", q: "location" },
     { en: "Contact", ar: "تواصل معنا", q: "contact" },
   ];
@@ -177,11 +179,88 @@ const WHATSAPP_NUMBER = "962790489291"; // from the company's Facebook page
         action: { label: ar ? "احجز الآن" : "Book now", href: "booking.html" },
       };
 
-    if (/(price|cost|كم|سعر|أسعار|التكلفة)/.test(t))
+    // bare كم is too broad — it swallowed "كم متر" (how many metres), which
+    // belongs to the size rule below
+    if (/(price|cost|سعر|أسعار|التكلفة|بكم)/.test(t))
       return {
         text: ar
           ? "الأسعار تختلف حسب المشروع والمساحة والطابق. تواصل معنا مباشرة وسنرسل لك قائمة الأسعار والمخططات المتوفرة."
           : "Prices vary by project, floor, and apartment size. Message us directly and we'll send you the current price list and floor plans.",
+        action: { label: "WhatsApp", href: `https://wa.me/${WHATSAPP_NUMBER}` },
+      };
+
+    // ── more specific topics run first: "apartment size" would otherwise be
+    // caught by the broad available-homes rule below ──
+
+    if (/(service|services|offer|do you do|خدمات|خدماتكم|تقدمون|ماذا تعملون)/.test(t))
+      return {
+        text: ar
+          ? "نحن مطوّر عقاري متكامل: نطوّر مشاريعنا السكنية على أرضنا، ونبيع الشقق مباشرة من المالك بلا وسيط، وننفّذ البناء والتشطيب بأنفسنا، ونرتّب معاينات خاصة، ونبقى على تواصل معك بعد التسليم."
+          : "We're a full developer: we build residential projects on our own land, sell apartments direct from the developer with no broker, handle construction and finishing ourselves, arrange private viewings, and stay reachable after handover.",
+        action: { label: ar ? "كيف نبني" : "How we build", href: "about.html#process" },
+      };
+
+    if (/(payment|installment|instalment|finance|mortgage|bank|دفع|تقسيط|أقساط|تمويل|بنك)/.test(t))
+      return {
+        text: ar
+          ? "طريقة الدفع تُرتَّب حسب كل حالة والشقة المختارة. راسلنا على واتساب وسنشرح لك الخيارات المتاحة بالتفصيل."
+          : "Payment terms are arranged case by case, depending on the apartment. Message us on WhatsApp and we'll walk you through the available options in detail.",
+        action: { label: "WhatsApp", href: `https://wa.me/${WHATSAPP_NUMBER}` },
+      };
+
+    if (/(size|area|square|metre|meter|m2|how big|مساحة|مساحات|متر|كم متر)/.test(t))
+      return {
+        text: ar
+          ? "الشقق مصمّمة بمساحات واسعة — الشقة الأرضية مع الحديقة مثلاً ٢٣٥ م². تجد مساحة كل شقة وتفاصيلها في صفحة المشاريع."
+          : "The layouts are generous — the garden apartment, for instance, is 235 m². Each apartment's exact area and details are listed on the projects page.",
+        action: { label: ar ? "شاهد الشقق" : "See the apartments", href: "projects.html#homes" },
+      };
+
+    if (/(finish|finishing|material|spec|quality|kitchen|bathroom|تشطيب|تشطيبات|مواصفات|مواد|جودة|مطبخ|حمام)/.test(t))
+      return {
+        text: ar
+          ? "واجهات حجر طبيعي بتفاصيل كلاسيكية وإضاءة معمارية دافئة، وشرفات عميقة لكل غرفة رئيسية. للمواصفات الكاملة لكل شقة راسلنا على واتساب."
+          : "Natural stone elevations with classical detailing and warm architectural lighting, plus deep terraces off every principal room. For the full specification of a specific apartment, message us on WhatsApp.",
+        action: { label: ar ? "تفاصيل المشروع" : "Project details", href: "projects.html" },
+      };
+
+    if (/(deliver|handover|ready|when|timeline|complete|تسليم|جاهز|متى|موعد التسليم|الإنجاز)/.test(t))
+      return {
+        text: ar
+          ? "نبني على مراحل واضحة: الأساسات والهيكل، ثم الجدران والتشطيب، ثم الفحص النهائي قبل تسليم المفتاح. لموعد التسليم لشقة محددة راسلنا على واتساب."
+          : "We build in clear stages — footings and structure, then walls and finishing, then a final walkthrough before the keys change hands. For the handover date on a specific apartment, message us on WhatsApp.",
+        action: { label: "WhatsApp", href: `https://wa.me/${WHATSAPP_NUMBER}` },
+      };
+
+    if (/(3d|tour|virtual|walk|ثلاثي|جولة|افتراضي|تجول)/.test(t))
+      return {
+        text: ar
+          ? "يمكنك التجوّل في المبنى بتقنية ثلاثية الأبعاد قبل زيارته — استعرض المجسّم والمخطط من المتصفح مباشرة."
+          : "You can walk the building in 3D before visiting — explore the model and the floor plan right from your browser.",
+        action: { label: ar ? "ابدأ الجولة" : "Start the tour", href: "tour.html" },
+      };
+
+    if (/(photo|photos|picture|image|gallery|see inside|صور|معرض|شاهد|الصور)/.test(t))
+      return {
+        text: ar
+          ? "يمكنك مشاهدة صور المشروع من الداخل والخارج في المعرض."
+          : "You can see the project inside and out in our gallery.",
+        action: { label: ar ? "افتح المعرض" : "Open the gallery", href: "gallery.html" },
+      };
+
+    if (/(deed|title|ownership|legal|registration|طابو|ملكية|تسجيل|قانوني)/.test(t))
+      return {
+        text: ar
+          ? "نتولى إجراءات التسجيل والملكية مع المشتري خطوة بخطوة. راسلنا على واتساب وسنوضح لك التفاصيل الخاصة بالشقة التي تهمك."
+          : "We handle registration and ownership paperwork with the buyer step by step. Message us on WhatsApp and we'll explain the details for the apartment you're interested in.",
+        action: { label: "WhatsApp", href: `https://wa.me/${WHATSAPP_NUMBER}` },
+      };
+
+    if (/(parking|garage|lift|elevator|storage|amenity|amenities|موقف|مواقف|كراج|مصعد|مستودع|خدمات المبنى)/.test(t))
+      return {
+        text: ar
+          ? "تفاصيل المواقف والمصعد والخدمات تختلف حسب الشقة والطابق. راسلنا على واتساب وسنرسل لك التفاصيل الدقيقة."
+          : "Parking, lift and building amenities vary by apartment and floor. Message us on WhatsApp and we'll send you the exact details.",
         action: { label: "WhatsApp", href: `https://wa.me/${WHATSAPP_NUMBER}` },
       };
 

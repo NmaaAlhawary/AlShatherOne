@@ -176,8 +176,55 @@ export function ChatWidget() {
     const A = (en, arr, ...actions) => ({ who: "bot", text: ar ? arr : en, actions: actions.filter(Boolean) });
     if (/(book|viewing|visit|appointment|حجز|معاينة|موعد|زيارة)/.test(t))
       return A("With pleasure! You can reserve a private viewing on our booking page.", "بكل سرور! يمكنك حجز موعد المعاينة من صفحة الحجز.", { label: ar ? "احجز الآن" : "Book now", to: "/booking" });
-    if (/(price|cost|كم|سعر|أسعار)/.test(t))
+    if (/(price|cost|سعر|أسعار|التكلفة|بكم)/.test(t))
       return A("Prices vary by project, floor, and apartment size. Message us directly and we'll send the current price list.", "الأسعار تختلف حسب المشروع والمساحة والطابق. راسلنا وسنرسل لك قائمة الأسعار.", { label: "WhatsApp", href: SOCIAL.whatsapp });
+    // more specific topics run first: "apartment size" would otherwise be
+    // caught by the broad available-homes rule below
+    if (/(service|services|offer|do you do|خدمات|خدماتكم|تقدمون|ماذا تعملون)/.test(t))
+      return A(
+        "We're a full developer: we build residential projects on our own land, sell apartments direct from the developer with no broker, handle construction and finishing ourselves, arrange private viewings, and stay reachable after handover.",
+        "نحن مطوّر عقاري متكامل: نطوّر مشاريعنا السكنية على أرضنا، ونبيع الشقق مباشرة من المالك بلا وسيط، وننفّذ البناء والتشطيب بأنفسنا، ونرتّب معاينات خاصة، ونبقى على تواصل معك بعد التسليم.",
+        { label: ar ? "كيف نبني" : "How we build", to: "/about" });
+    if (/(payment|installment|instalment|finance|mortgage|bank|دفع|تقسيط|أقساط|تمويل|بنك)/.test(t))
+      return A(
+        "Payment terms are arranged case by case, depending on the apartment. Message us on WhatsApp and we'll walk you through the available options in detail.",
+        "طريقة الدفع تُرتَّب حسب كل حالة والشقة المختارة. راسلنا على واتساب وسنشرح لك الخيارات المتاحة بالتفصيل.",
+        { label: "WhatsApp", href: SOCIAL.whatsapp });
+    if (/(size|area|square|metre|meter|m2|how big|مساحة|مساحات|متر|كم متر)/.test(t))
+      return A(
+        "The layouts are generous — the garden apartment, for instance, is 235 m². Each apartment's exact area and details are listed on the projects page.",
+        "الشقق مصمّمة بمساحات واسعة — الشقة الأرضية مع الحديقة مثلاً ٢٣٥ م². تجد مساحة كل شقة وتفاصيلها في صفحة المشاريع.",
+        { label: ar ? "شاهد الشقق" : "See the apartments", to: "/projects" });
+    if (/(finish|finishing|material|spec|quality|kitchen|bathroom|تشطيب|تشطيبات|مواصفات|مواد|جودة|مطبخ|حمام)/.test(t))
+      return A(
+        "Natural stone elevations with classical detailing and warm architectural lighting, plus deep terraces off every principal room. For the full specification of a specific apartment, message us on WhatsApp.",
+        "واجهات حجر طبيعي بتفاصيل كلاسيكية وإضاءة معمارية دافئة، وشرفات عميقة لكل غرفة رئيسية. للمواصفات الكاملة لكل شقة راسلنا على واتساب.",
+        { label: ar ? "تفاصيل المشروع" : "Project details", to: "/projects" });
+    if (/(deliver|handover|ready|when|timeline|complete|تسليم|جاهز|متى|الإنجاز)/.test(t))
+      return A(
+        "We build in clear stages — footings and structure, then walls and finishing, then a final walkthrough before the keys change hands. For the handover date on a specific apartment, message us on WhatsApp.",
+        "نبني على مراحل واضحة: الأساسات والهيكل، ثم الجدران والتشطيب، ثم الفحص النهائي قبل تسليم المفتاح. لموعد التسليم لشقة محددة راسلنا على واتساب.",
+        { label: "WhatsApp", href: SOCIAL.whatsapp });
+    if (/(3d|tour|virtual|walk|ثلاثي|جولة|افتراضي|تجول)/.test(t))
+      return A(
+        "You can walk the building in 3D before visiting — explore the model and the floor plan right from your browser.",
+        "يمكنك التجوّل في المبنى بتقنية ثلاثية الأبعاد قبل زيارته — استعرض المجسّم والمخطط من المتصفح مباشرة.",
+        { label: ar ? "ابدأ الجولة" : "Start the tour", to: "/tour" });
+    if (/(photo|photos|picture|image|gallery|see inside|صور|معرض|الصور)/.test(t))
+      return A(
+        "You can see the project inside and out in our gallery.",
+        "يمكنك مشاهدة صور المشروع من الداخل والخارج في المعرض.",
+        { label: ar ? "افتح المعرض" : "Open the gallery", to: "/gallery" });
+    if (/(deed|title|ownership|legal|registration|طابو|ملكية|تسجيل|قانوني)/.test(t))
+      return A(
+        "We handle registration and ownership paperwork with the buyer step by step. Message us on WhatsApp and we'll explain the details for the apartment you're interested in.",
+        "نتولى إجراءات التسجيل والملكية مع المشتري خطوة بخطوة. راسلنا على واتساب وسنوضح لك التفاصيل الخاصة بالشقة التي تهمك.",
+        { label: "WhatsApp", href: SOCIAL.whatsapp });
+    if (/(parking|garage|lift|elevator|storage|amenity|amenities|موقف|مواقف|كراج|مصعد|مستودع)/.test(t))
+      return A(
+        "Parking, lift and building amenities vary by apartment and floor. Message us on WhatsApp and we'll send you the exact details.",
+        "تفاصيل المواقف والمصعد والخدمات تختلف حسب الشقة والطابق. راسلنا على واتساب وسنرسل لك التفاصيل الدقيقة.",
+        { label: "WhatsApp", href: SOCIAL.whatsapp });
     if (/(available|homes|apartment|شقق|متوفر|مشاريع)/.test(t))
       return A("Currently featuring Residence 1719 — spacious apartments in a prime Amman district.", "حالياً: مشروع الشاذروان ١٧١٩ — شقق واسعة في موقع مميز بعمّان.", { label: ar ? "شاهد المشروع" : "See the residence", to: "/projects" });
     if (/(where|location|address|directions|map|أين|موقع|عنوان|خريطة)/.test(t))
@@ -206,6 +253,8 @@ export function ChatWidget() {
   const chips = [
     { label: L({ en: "Available homes", ar: "الشقق المتوفرة" }), q: "available homes" },
     { label: L({ en: "Book a viewing", ar: "احجز معاينة" }), q: "book a viewing" },
+    { label: L({ en: "Our services", ar: "خدماتنا" }), q: "services" },
+    { label: L({ en: "Payment", ar: "طريقة الدفع" }), q: "payment" },
     { label: L({ en: "Location", ar: "الموقع" }), q: "location" },
   ];
 
