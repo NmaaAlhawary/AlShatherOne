@@ -2597,3 +2597,29 @@ html[lang="ar"] .cbtn { font-family: var(--arabic); letter-spacing: 0; font-size
   /* form labels tell you what you're typing into — never below the floor */
   .booking-form label, .field label { font-size: 0.72rem; letter-spacing: 0.16em; }
 }
+
+/* ── Phone nav: give the lockup the weight, shrink the controls ──
+   The عربي pill and search were carrying a full 44px box each, which made
+   them read louder than the wordmark. The visible controls are now compact
+   and an invisible 44px pseudo-element preserves the touch target. */
+@media (max-width: 640px) {
+  .nav-brand-ar { font-size: 1.5rem; line-height: 1.2; }
+  .nav-brand-en { font-size: 0.56rem; letter-spacing: 0.3em; text-indent: 0.3em; }
+
+  .lang-toggle {
+    min-height: 0;
+    font-size: 0.78rem;
+    padding: 0.34em 0.8em 0.42em;
+    border-color: rgba(18,58,82,0.28);
+  }
+  .nav-search { min-height: 0; padding: 4px; }
+  .nav-search svg { width: 15px; height: 15px; }
+
+  .lang-toggle, .nav-search { position: relative; }
+  .lang-toggle::after, .nav-search::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px; height: 44px;
+  }
+  .nav-side { gap: 0.35rem; }
+}
